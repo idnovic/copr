@@ -5,7 +5,7 @@ Summary:        Window management and application launching for GNOME
 
 License:        GPLv2+
 Provides:       desktop-notification-daemon
-URL:            https://wiki.gnome.org/Projects/GnomeShell
+#URL:            https://wiki.gnome.org/Projects/GnomeShell
 #VCS:           git:git://git.gnome.org/gnome-shell
 Source0:        %{name}-%{version}.tar.xz
 
