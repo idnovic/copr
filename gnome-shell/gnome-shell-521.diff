@@ -1,0 +1,13 @@
+diff --git a/js/ui/panel.js b/js/ui/panel.js
+index 9790d4843c038b8caec1cc84e37fc7adc942dedd..7fe09fe50e24670869a2a4d37b5ee154f8aca97a 100644
+--- a/js/ui/panel.js
++++ b/js/ui/panel.js
+@@ -877,7 +877,7 @@ class Panel extends St.Widget {
+     }
+ 
+     vfunc_allocate(box, flags) {
+-        super.vfunc_allocate(box, flags);
++        this.set_allocation(box, flags);
+ 
+         let allocWidth = box.x2 - box.x1;
+         let allocHeight = box.y2 - box.y1;

@@ -1,0 +1,1959 @@
+diff --git a/js/gdm/loginDialog.js b/js/gdm/loginDialog.js
+index a22f55e595f3a75bd49c343802a43e2caf9aca77..55ba3801e468e1a1f64ee61be9a55eefab224cc1 100644
+--- a/js/gdm/loginDialog.js
++++ b/js/gdm/loginDialog.js
+@@ -23,7 +23,6 @@ const Gdm = imports.gi.Gdm;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Meta = imports.gi.Meta;
+ const Pango = imports.gi.Pango;
+ const Shell = imports.gi.Shell;
+@@ -161,8 +160,8 @@ Signals.addSignalMethods(UserListItem.prototype);
+ var UserList = class {
+     constructor() {
+         this.actor = new St.ScrollView({ style_class: 'login-dialog-user-list-view'});
+-        this.actor.set_policy(Gtk.PolicyType.NEVER,
+-                              Gtk.PolicyType.AUTOMATIC);
++        this.actor.set_policy(St.PolicyType.NEVER,
++                              St.PolicyType.AUTOMATIC);
+ 
+         this._box = new St.BoxLayout({ vertical: true,
+                                        style_class: 'login-dialog-user-list',
+@@ -183,7 +182,7 @@ var UserList = class {
+         if (global.stage.get_key_focus() != this.actor)
+             return;
+ 
+-        let focusSet = this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++        let focusSet = this.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+         if (!focusSet) {
+             Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+                 this._moveFocusToItems();
+@@ -473,8 +472,8 @@ var LoginDialog = GObject.registerClass({
+ 
+         this._bannerView = new St.ScrollView({ style_class: 'login-dialog-banner-view',
+                                                opacity: 0,
+-                                               vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+-                                               hscrollbar_policy: Gtk.PolicyType.NEVER });
++                                               vscrollbar_policy: St.PolicyType.AUTOMATIC,
++                                               hscrollbar_policy: St.PolicyType.NEVER });
+         this.add_child(this._bannerView);
+ 
+         let bannerBox = new St.BoxLayout({ vertical: true });
+diff --git a/js/ui/appDisplay.js b/js/ui/appDisplay.js
+index b8865cf2ccbc671b61fdee41b8a5d9ec31fb63ad..1a3533cab157bd061990fbb557e05fc7d443a5b5 100644
+--- a/js/ui/appDisplay.js
++++ b/js/ui/appDisplay.js
+@@ -4,7 +4,6 @@ const Clutter = imports.gi.Clutter;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Shell = imports.gi.Shell;
+ const Signals = imports.signals;
+ const Meta = imports.gi.Meta;
+@@ -175,7 +174,7 @@ class BaseAppView {
+ 
+     _selectAppInternal(id) {
+         if (this._items[id])
+-            this._items[id].actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++            this._items[id].actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+         else
+             log('No such application ' + id);
+     }
+@@ -370,8 +369,8 @@ var AllView = class AllView extends BaseAppView {
+                                      x_expand:true, y_expand:true });
+         this.actor.add_actor(this._scrollView);
+ 
+-        this._scrollView.set_policy(Gtk.PolicyType.NEVER,
+-                                    Gtk.PolicyType.EXTERNAL);
++        this._scrollView.set_policy(St.PolicyType.NEVER,
++                                    St.PolicyType.EXTERNAL);
+         this._adjustment = this._scrollView.vscroll.adjustment;
+ 
+         this._pageIndicators = new PageIndicators();
+@@ -1124,7 +1123,7 @@ var FolderView = class FolderView extends BaseAppView {
+         this._grid.x_expand = true;
+ 
+         this.actor = new St.ScrollView({ overlay_scrollbars: true });
+-        this.actor.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
++        this.actor.set_policy(St.PolicyType.NEVER, St.PolicyType.AUTOMATIC);
+         let scrollableContainer = new St.BoxLayout({ vertical: true, reactive: true });
+         scrollableContainer.add_actor(this._grid);
+         this.actor.add_actor(scrollableContainer);
+@@ -1468,18 +1467,18 @@ var AppFolderPopup = class AppFolderPopup {
+         let isLtr = Clutter.get_default_text_direction() == Clutter.TextDirection.LTR;
+         switch (event.get_key_symbol()) {
+             case Clutter.Down:
+-                direction = Gtk.DirectionType.TAB_FORWARD;
++                direction = St.DirectionType.TAB_FORWARD;
+                 break;
+             case Clutter.Right:
+-                direction = isLtr ? Gtk.DirectionType.TAB_FORWARD :
+-                                    Gtk.DirectionType.TAB_BACKWARD;
++                direction = isLtr ? St.DirectionType.TAB_FORWARD :
++                                    St.DirectionType.TAB_BACKWARD;
+                 break;
+             case Clutter.Up:
+-                direction = Gtk.DirectionType.TAB_BACKWARD;
++                direction = St.DirectionType.TAB_BACKWARD;
+                 break;
+             case Clutter.Left:
+-                direction = isLtr ? Gtk.DirectionType.TAB_BACKWARD :
+-                                    Gtk.DirectionType.TAB_FORWARD;
++                direction = isLtr ? St.DirectionType.TAB_BACKWARD :
++                                    St.DirectionType.TAB_FORWARD;
+                 break;
+             default:
+                 return Clutter.EVENT_PROPAGATE;
+@@ -1690,7 +1689,7 @@ var AppIcon = class AppIcon {
+ 
+     _onKeyboardPopupMenu() {
+         this.popupMenu();
+-        this._menu.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++        this._menu.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+     }
+ 
+     getId() {
+diff --git a/js/ui/calendar.js b/js/ui/calendar.js
+index bbe44d022e66d7289887bf71bb9f9cc4e930d54e..32a99344c7b92b76b7bf4a0c7cc4a2dc1d72f07b 100644
+--- a/js/ui/calendar.js
++++ b/js/ui/calendar.js
+@@ -3,7 +3,6 @@
+ const Clutter = imports.gi.Clutter;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+ const St = imports.gi.St;
+ const Signals = imports.signals;
+ const Shell = imports.gi.Shell;
+@@ -1083,7 +1082,7 @@ var CalendarMessageList = class CalendarMessageList {
+                                                overlay_scrollbars: true,
+                                                x_expand: true, y_expand: true,
+                                                x_fill: true, y_fill: true });
+-        this._scrollView.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
++        this._scrollView.set_policy(St.PolicyType.NEVER, St.PolicyType.AUTOMATIC);
+         box.add_actor(this._scrollView);
+ 
+         this._clearButton = new St.Button({ style_class: 'message-list-clear-button button',
+diff --git a/js/ui/components/telepathyClient.js b/js/ui/components/telepathyClient.js
+index 41b4985f466be06c84778315126f6b35e6349c2b..86e40b4e7873ac7190e18180113309048d19f861 100644
+--- a/js/ui/components/telepathyClient.js
++++ b/js/ui/components/telepathyClient.js
+@@ -4,7 +4,6 @@ const Clutter = imports.gi.Clutter;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Lang = imports.lang;
+ const Mainloop = imports.mainloop;
+ const Signals = imports.signals;
+@@ -821,8 +820,8 @@ var ChatNotificationBanner = class extends MessageTray.NotificationBanner {
+         });
+ 
+         this._scrollArea = new St.ScrollView({ style_class: 'chat-scrollview vfade',
+-                                               vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+-                                               hscrollbar_policy: Gtk.PolicyType.NEVER,
++                                               vscrollbar_policy: St.PolicyType.AUTOMATIC,
++                                               hscrollbar_policy: St.PolicyType.NEVER,
+                                                visible: this.expanded });
+         this._contentArea = new St.BoxLayout({ style_class: 'chat-body',
+                                                vertical: true });
+diff --git a/js/ui/ctrlAltTab.js b/js/ui/ctrlAltTab.js
+index 62e1f3d933af0ad7a051b823736e91e735591dbb..e66e663ffcb34d2ff37203301296a961ad5103ba 100644
+--- a/js/ui/ctrlAltTab.js
++++ b/js/ui/ctrlAltTab.js
+@@ -1,7 +1,6 @@
+ // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+ 
+ const Clutter = imports.gi.Clutter;
+-const Gtk = imports.gi.Gtk;
+ const Meta = imports.gi.Meta;
+ const Shell = imports.gi.Shell;
+ const St = imports.gi.St;
+@@ -58,7 +57,7 @@ var CtrlAltTabManager = class CtrlAltTabManager {
+         if (item.focusCallback)
+             item.focusCallback(timestamp);
+         else
+-            item.root.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++            item.root.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+     }
+ 
+     // Sort the items into a consistent order; panel first, tray last,
+diff --git a/js/ui/dateMenu.js b/js/ui/dateMenu.js
+index b2e2f0cd8ad12c39182245417d2e1065c5bc4d43..5d693896057fab233529532ca771cf3f47af1299 100644
+--- a/js/ui/dateMenu.js
++++ b/js/ui/dateMenu.js
+@@ -4,7 +4,6 @@ const GLib = imports.gi.GLib;
+ const Gio = imports.gi.Gio;
+ const GnomeDesktop = imports.gi.GnomeDesktop;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const GWeather = imports.gi.GWeather;
+ const Mainloop = imports.mainloop;
+ const Pango = imports.gi.Pango;
+@@ -515,7 +514,7 @@ class DateMenuButton extends PanelMenu.Button {
+         this._displaysSection = new St.ScrollView({ style_class: 'datemenu-displays-section vfade',
+                                                     x_expand: true, x_fill: true,
+                                                     overlay_scrollbars: true });
+-        this._displaysSection.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
++        this._displaysSection.set_policy(St.PolicyType.NEVER, St.PolicyType.AUTOMATIC);
+         vbox.add_actor(this._displaysSection);
+ 
+         let displaysBox = new St.BoxLayout({ vertical: true,
+diff --git a/js/ui/dnd.js b/js/ui/dnd.js
+index 07c19202a9448693cc9facd65a87fcdf4a785fcb..c5a1c0517533cab56b260116d7b61da7389500cc 100644
+--- a/js/ui/dnd.js
++++ b/js/ui/dnd.js
+@@ -2,7 +2,6 @@
+ 
+ const Clutter = imports.gi.Clutter;
+ const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+ const St = imports.gi.St;
+ const Meta = imports.gi.Meta;
+ const Shell = imports.gi.Shell;
+@@ -442,7 +441,7 @@ var _Draggable = class _Draggable {
+         let [stageX, stageY] = event.get_coords();
+ 
+         // See if the user has moved the mouse enough to trigger a drag
+-        let threshold = Gtk.Settings.get_default().gtk_dnd_drag_threshold;
++        let threshold = St.Settings.get().drag_threshold;
+         if (!currentDraggable &&
+             (Math.abs(stageX - this._dragStartX) > threshold ||
+              Math.abs(stageY - this._dragStartY) > threshold)) {
+diff --git a/js/ui/endSessionDialog.js b/js/ui/endSessionDialog.js
+index 7c3a022569f2e7fb9c45751fa30d28ac1eea6cba..1d6efc5ecc31858bccc5667ca9c196185dbd5bb3 100644
+--- a/js/ui/endSessionDialog.js
++++ b/js/ui/endSessionDialog.js
+@@ -22,7 +22,6 @@ const AccountsService = imports.gi.AccountsService;
+ const Clutter = imports.gi.Clutter;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+ const Pango = imports.gi.Pango;
+ const Polkit = imports.gi.Polkit;
+ const St = imports.gi.St;
+@@ -320,7 +319,7 @@ var EndSessionDialog = class EndSessionDialog extends ModalDialog.ModalDialog {
+         messageLayout.add(this._batteryWarning);
+ 
+         this._scrollView = new St.ScrollView({ style_class: 'end-session-dialog-list' });
+-        this._scrollView.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
++        this._scrollView.set_policy(St.PolicyType.NEVER, St.PolicyType.AUTOMATIC);
+         this.contentLayout.add(this._scrollView,
+                                { x_fill: true,
+                                  y_fill: true });
+diff --git a/js/ui/environment.js b/js/ui/environment.js
+index 91f9fbdd353238395922a03be45a7e864cfe6786..03698e55b7314a54cc0c3b391975605c34c96310 100644
+--- a/js/ui/environment.js
++++ b/js/ui/environment.js
+@@ -4,7 +4,6 @@ const Config = imports.misc.config;
+ 
+ imports.gi.versions.Clutter = Config.LIBMUTTER_API_VERSION;
+ imports.gi.versions.Gio = '2.0';
+-imports.gi.versions.Gdk = '3.0';
+ imports.gi.versions.GdkPixbuf = '2.0';
+ imports.gi.versions.Gtk = '3.0';
+ imports.gi.versions.TelepathyGLib = '0.12';
+diff --git a/js/ui/grabHelper.js b/js/ui/grabHelper.js
+index 9f6f188bd58d16b0869dbaa6bee4d58eaa021c60..a47b18a337a22f4f6571d7221486979207c7763f 100644
+--- a/js/ui/grabHelper.js
++++ b/js/ui/grabHelper.js
+@@ -1,7 +1,6 @@
+ // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+ 
+ const Clutter = imports.gi.Clutter;
+-const Gtk = imports.gi.Gtk;
+ const Meta = imports.gi.Meta;
+ const Shell = imports.gi.Shell;
+ const St = imports.gi.St;
+@@ -187,7 +186,7 @@ var GrabHelper = class GrabHelper {
+         if (params.focus) {
+             params.focus.grab_key_focus();
+         } else if (newFocus && hadFocus) {
+-            if (!newFocus.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false))
++            if (!newFocus.navigate_focus(null, St.DirectionType.TAB_FORWARD, false))
+                 newFocus.grab_key_focus();
+         }
+ 
+diff --git a/js/ui/iconGrid.js b/js/ui/iconGrid.js
+index 452dc0c96cabd88834e106cf8354e9cc256965ec..9e1eb2ac8f3d35dc327851741aed54fcd6ee46eb 100644
+--- a/js/ui/iconGrid.js
++++ b/js/ui/iconGrid.js
+@@ -2,7 +2,6 @@
+ 
+ const Clutter = imports.gi.Clutter;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Meta = imports.gi.Meta;
+ const Shell = imports.gi.Shell;
+ const Signals = imports.signals;
+@@ -956,8 +955,8 @@ var PaginatedIconGrid = GObject.registerClass({
+             this._translatedChildren = [];
+             this.emit('space-opened');
+         } else {
+-            this._translateChildren(childrenUp, Gtk.DirectionType.UP, nRowsUp);
+-            this._translateChildren(childrenDown, Gtk.DirectionType.DOWN, nRowsDown);
++            this._translateChildren(childrenUp, St.DirectionType.UP, nRowsUp);
++            this._translateChildren(childrenDown, St.DirectionType.DOWN, nRowsDown);
+             this._translatedChildren = childrenUp.concat(childrenDown);
+         }
+     }
+@@ -967,7 +966,7 @@ var PaginatedIconGrid = GObject.registerClass({
+         if (translationY == 0)
+             return;
+ 
+-        if (direction == Gtk.DirectionType.UP)
++        if (direction == St.DirectionType.UP)
+             translationY *= -1;
+ 
+         for (let i = 0; i < children.length; i++) {
+diff --git a/js/ui/keyboard.js b/js/ui/keyboard.js
+index a304670067ed17d15263c22afad9807d28552ab9..a5732636177b459e26a64c582d73ad3efbe3ea27 100644
+--- a/js/ui/keyboard.js
++++ b/js/ui/keyboard.js
+@@ -2,7 +2,6 @@
+ 
+ const Atspi = imports.gi.Atspi;
+ const Clutter = imports.gi.Clutter;
+-const Gdk = imports.gi.Gdk;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+ const GObject = imports.gi.GObject;
+@@ -280,7 +279,7 @@ var Key = class Key {
+ 
+     _getKeyval(key) {
+         let unicode = String.charCodeAt(key, 0);
+-        return Gdk.unicode_to_keyval(unicode);
++        return Clutter.unicode_to_keysym(unicode);
+     }
+ 
+     _press(key) {
+diff --git a/js/ui/lookingGlass.js b/js/ui/lookingGlass.js
+index 8c5e29402006aa4ff5eebccfd26c38a1b578a905..185ed421a7fbed5a3f3f19ac357143867769eb90 100644
+--- a/js/ui/lookingGlass.js
++++ b/js/ui/lookingGlass.js
+@@ -5,7 +5,6 @@ const Cogl = imports.gi.Cogl;
+ const GLib = imports.gi.GLib;
+ const Gio = imports.gi.Gio;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Meta = imports.gi.Meta;
+ const Pango = imports.gi.Pango;
+ const St = imports.gi.St;
+@@ -187,7 +186,7 @@ var Notebook = class Notebook {
+ 
+         // Focus the new tab before unmapping the old one
+         let tabData = this._tabs[index];
+-        if (!tabData.scrollView.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false))
++        if (!tabData.scrollView.navigate_focus(null, St.DirectionType.TAB_FORWARD, false))
+             this.actor.grab_key_focus();
+ 
+         this._unselect();
+diff --git a/js/ui/main.js b/js/ui/main.js
+index fccfcb9ef016d3b6154af84267657e1bbbe51c63..ccecb49d4f7a9cfccecc96609c3ec79e8ecd7d39 100644
+--- a/js/ui/main.js
++++ b/js/ui/main.js
+@@ -1,10 +1,8 @@
+ // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+ 
+ const Clutter = imports.gi.Clutter;
+-const Gdk = imports.gi.Gdk;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+ const Mainloop = imports.mainloop;
+ const Meta = imports.gi.Meta;
+ const Shell = imports.gi.Shell;
+@@ -128,9 +126,8 @@ function start() {
+ 
+     sessionMode = new SessionMode.SessionMode();
+     sessionMode.connect('updated', _sessionUpdated);
+-    Gtk.Settings.get_default().connect('notify::gtk-theme-name',
+-                                       _loadDefaultStylesheet);
+-    Gtk.IconTheme.get_default().add_resource_path('/org/gnome/shell/theme/icons');
++
++    St.Settings.get().connect('notify::gtk-theme', _loadDefaultStylesheet);
+     _initializeUI();
+ 
+     shellAccessDialogDBusService = new AccessDialog.AccessDialogDBus();
+@@ -280,7 +277,7 @@ function _getDefaultStylesheet() {
+ 
+     // Look for a high-contrast variant first when using GTK+'s HighContrast
+     // theme
+-    if (Gtk.Settings.get_default().gtk_theme_name == 'HighContrast')
++    if (St.Settings.get().gtk_theme == 'HighContrast')
+         stylesheet = _getStylesheet(name.replace('.css', '-high-contrast.css'));
+ 
+     if (stylesheet == null)
+diff --git a/js/ui/messageTray.js b/js/ui/messageTray.js
+index 822cdeca4b250b023b0e1d146586a0170bdbe8a2..a85ee577c091f923795f4ceb96c054e64f5ceb01 100644
+--- a/js/ui/messageTray.js
++++ b/js/ui/messageTray.js
+@@ -4,7 +4,6 @@ const Clutter = imports.gi.Clutter;
+ const GLib = imports.gi.GLib;
+ const Gio = imports.gi.Gio;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Atk = imports.gi.Atk;
+ const Mainloop = imports.mainloop;
+ const Meta = imports.gi.Meta;
+@@ -98,7 +97,7 @@ var FocusGrabber = class FocusGrabber {
+ 
+         this._focusActorChangedId = global.stage.connect('notify::key-focus', this._focusActorChanged.bind(this));
+ 
+-        if (!this._actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false))
++        if (!this._actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false))
+             this._actor.grab_key_focus();
+ 
+         this._focused = true;
+diff --git a/js/ui/modalDialog.js b/js/ui/modalDialog.js
+index d6ebcb5f38ae162ab275a61535e7d5dde264ac12..739de2d5e524904126a4dcf3510692b71968baed 100644
+--- a/js/ui/modalDialog.js
++++ b/js/ui/modalDialog.js
+@@ -1,7 +1,6 @@
+ // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+ 
+ const Clutter = imports.gi.Clutter;
+-const Gdk = imports.gi.Gdk;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+ const Meta = imports.gi.Meta;
+@@ -197,7 +196,6 @@ var ModalDialog = class {
+         else
+             this._savedKeyFocus = null;
+         Main.popModal(this._group, timestamp);
+-        Gdk.Display.get_default().sync();
+         this._hasModal = false;
+ 
+         if (!this._shellReactive)
+diff --git a/js/ui/notificationDaemon.js b/js/ui/notificationDaemon.js
+index cd871a558b4ef23bb6ad7ad8698f4a082b8bd3d0..4180609bd8e575fae61bffaa0329120070054f73 100644
+--- a/js/ui/notificationDaemon.js
++++ b/js/ui/notificationDaemon.js
+@@ -4,7 +4,6 @@ const Clutter = imports.gi.Clutter;
+ const GdkPixbuf = imports.gi.GdkPixbuf;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+ const Shell = imports.gi.Shell;
+ const Mainloop = imports.mainloop;
+ const St = imports.gi.St;
+diff --git a/js/ui/overview.js b/js/ui/overview.js
+index ae60e1a240eb36e979b97a69b910c607a1beb2c1..e92b21e50e9a633cc6b5d8d7f796b896d6aae366 100644
+--- a/js/ui/overview.js
++++ b/js/ui/overview.js
+@@ -2,13 +2,11 @@
+ 
+ const Clutter = imports.gi.Clutter;
+ const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+ const Meta = imports.gi.Meta;
+ const Mainloop = imports.mainloop;
+ const Signals = imports.signals;
+ const St = imports.gi.St;
+ const Shell = imports.gi.Shell;
+-const Gdk = imports.gi.Gdk;
+ 
+ const Background = imports.ui.background;
+ const DND = imports.ui.dnd;
+@@ -158,7 +156,6 @@ var Overview = class {
+         this._windowSwitchTimestamp = 0;
+         this._lastActiveWorkspaceIndex = -1;
+         this._lastHoveredWindow = null;
+-        this._needsFakePointerEvent = false;
+ 
+         if (this._initCalled)
+             this.init();
+@@ -306,19 +303,9 @@ var Overview = class {
+         if (this._windowSwitchTimeoutId != 0) {
+             Mainloop.source_remove(this._windowSwitchTimeoutId);
+             this._windowSwitchTimeoutId = 0;
+-            this._needsFakePointerEvent = false;
+         }
+     }
+ 
+-    _fakePointerEvent() {
+-        let display = Gdk.Display.get_default();
+-        let deviceManager = display.get_device_manager();
+-        let pointer = deviceManager.get_client_pointer();
+-        let [gdkScreen, pointerX, pointerY] = pointer.get_position();
+-
+-        pointer.warp(gdkScreen, pointerX, pointerY);
+-    }
+-
+     _onDragMotion(dragEvent) {
+         let targetIsWindow = dragEvent.targetActor &&
+                              dragEvent.targetActor._delegate &&
+@@ -340,7 +327,6 @@ var Overview = class {
+             this._windowSwitchTimeoutId = Mainloop.timeout_add(DND_WINDOW_SWITCH_TIMEOUT,
+                 () => {
+                     this._windowSwitchTimeoutId = 0;
+-                    this._needsFakePointerEvent = true;
+                     Main.activateWindow(dragEvent.targetActor._delegate.metaWindow,
+                                         this._windowSwitchTimestamp);
+                     this.hide();
+@@ -643,12 +629,6 @@ var Overview = class {
+             Main.layoutManager.hideOverview();
+ 
+         this._syncGrab();
+-
+-        // Fake a pointer event if requested
+-        if (this._needsFakePointerEvent) {
+-            this._fakePointerEvent();
+-            this._needsFakePointerEvent = false;
+-        }
+     }
+ 
+     toggle() {
+diff --git a/js/ui/panel.js b/js/ui/panel.js
+index 3e3f4d4d84df00546a0e098818668b98d048e89f..9b264d9b016fbc585076ea214a1b446fa2039b7a 100644
+--- a/js/ui/panel.js
++++ b/js/ui/panel.js
+@@ -989,7 +989,7 @@ class Panel extends St.Widget {
+ 
+         menu.toggle();
+         if (menu.isOpen)
+-            menu.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++            menu.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+     }
+ 
+     toggleAppMenu() {
+diff --git a/js/ui/panelMenu.js b/js/ui/panelMenu.js
+index 13cc72f7b58564b8955b67af9658554a89bd91de..72fcae4c15399182bc1421d551d4405bc90fd475 100644
+--- a/js/ui/panelMenu.js
++++ b/js/ui/panelMenu.js
+@@ -3,7 +3,6 @@
+ const Clutter = imports.gi.Clutter;
+ const Gio = imports.gi.Gio;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Shell = imports.gi.Shell;
+ const Signals = imports.signals;
+ const St = imports.gi.St;
+@@ -163,7 +162,7 @@ var Button = GObject.registerClass({
+         if (symbol == Clutter.KEY_Left || symbol == Clutter.KEY_Right) {
+             let group = global.focus_manager.get_group(this.actor);
+             if (group) {
+-                let direction = (symbol == Clutter.KEY_Left) ? Gtk.DirectionType.LEFT : Gtk.DirectionType.RIGHT;
++                let direction = (symbol == Clutter.KEY_Left) ? St.DirectionType.LEFT : St.DirectionType.RIGHT;
+                 group.navigate_focus(this.actor, direction, false);
+                 return Clutter.EVENT_STOP;
+             }
+diff --git a/js/ui/popupMenu.js b/js/ui/popupMenu.js
+index 02ab885d4b1877aba86156ff64d93ec216294a93..a824eaecce3699c1e658719a01f79ea300088b66 100644
+--- a/js/ui/popupMenu.js
++++ b/js/ui/popupMenu.js
+@@ -1,7 +1,6 @@
+ // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+ 
+ const Clutter = imports.gi.Clutter;
+-const Gtk = imports.gi.Gtk;
+ const Gio = imports.gi.Gio;
+ const GObject = imports.gi.GObject;
+ const Shell = imports.gi.Shell;
+@@ -543,7 +542,7 @@ var PopupMenuBase = class {
+             let sensitive = menuItem.getSensitive();
+             if (!sensitive && this._activeMenuItem == menuItem) {
+                 if (!this.actor.navigate_focus(menuItem.actor,
+-                                               Gtk.DirectionType.TAB_FORWARD,
++                                               St.DirectionType.TAB_FORWARD,
+                                                true))
+                     this.actor.grab_key_focus();
+             } else if (sensitive && this._activeMenuItem == null) {
+@@ -829,7 +828,7 @@ var PopupMenu = class extends PopupMenuBase {
+         } else if (symbol == navKey) {
+             if (!this.isOpen)
+                 this.toggle();
+-            this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++            this.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+             return Clutter.EVENT_STOP;
+         } else
+             return Clutter.EVENT_PROPAGATE;
+@@ -914,8 +913,8 @@ var PopupSubMenu = class extends PopupMenuBase {
+         // with long content, we make it scrollable - the scrollbar will only take
+         // effect if a CSS max-height is set on the top menu.
+         this.actor = new St.ScrollView({ style_class: 'popup-sub-menu',
+-                                         hscrollbar_policy: Gtk.PolicyType.NEVER,
+-                                         vscrollbar_policy: Gtk.PolicyType.NEVER });
++                                         hscrollbar_policy: St.PolicyType.NEVER,
++                                         vscrollbar_policy: St.PolicyType.NEVER });
+ 
+         this.actor.add_actor(this.box);
+         this.actor._delegate = this;
+@@ -957,7 +956,7 @@ var PopupSubMenu = class extends PopupMenuBase {
+         // when we *don't* need it, so turn off the scrollbar when that's true.
+         // Dynamic changes in whether we need it aren't handled properly.
+         this.actor.vscrollbar_policy =
+-            needsScrollbar ? Gtk.PolicyType.AUTOMATIC : Gtk.PolicyType.NEVER;
++            needsScrollbar ? St.PolicyType.AUTOMATIC : St.PolicyType.NEVER;
+ 
+         if (needsScrollbar)
+             this.actor.add_style_pseudo_class('scrolled');
+@@ -1150,7 +1149,7 @@ var PopupSubMenuMenuItem = class extends PopupBaseMenuItem {
+ 
+         if (symbol == Clutter.KEY_Right) {
+             this._setOpenState(true);
+-            this.menu.actor.navigate_focus(null, Gtk.DirectionType.DOWN, false);
++            this.menu.actor.navigate_focus(null, St.DirectionType.DOWN, false);
+             return Clutter.EVENT_STOP;
+         } else if (symbol == Clutter.KEY_Left && this._getOpenState()) {
+             this._setOpenState(false);
+diff --git a/js/ui/screenShield.js b/js/ui/screenShield.js
+index 2f18390f35ace4c52ec8e2b8d2edaf22f2d384d6..adbacfeebfbc86db503251c20aef232fcfcb659a 100644
+--- a/js/ui/screenShield.js
++++ b/js/ui/screenShield.js
+@@ -8,7 +8,6 @@ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+ const GnomeDesktop = imports.gi.GnomeDesktop;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Mainloop = imports.mainloop;
+ const Meta = imports.gi.Meta;
+ const Shell = imports.gi.Shell;
+@@ -101,7 +100,7 @@ var NotificationsBox = class {
+                                         style_class: 'screen-shield-notifications-container' });
+ 
+         this._scrollView = new St.ScrollView({ x_fill: false, x_align: St.Align.START,
+-                                               hscrollbar_policy: Gtk.PolicyType.NEVER });
++                                               hscrollbar_policy: St.PolicyType.NEVER });
+         this._notificationBox = new St.BoxLayout({ vertical: true,
+                                                    style_class: 'screen-shield-notifications-container' });
+         this._scrollView.add_actor(this._notificationBox);
+@@ -258,7 +257,7 @@ var NotificationsBox = class {
+             // block scrollbars while animating, if they're not needed now
+             let boxHeight = this._notificationBox.height;
+             if (this._scrollView.height >= boxHeight)
+-                this._scrollView.vscrollbar_policy = Gtk.PolicyType.NEVER;
++                this._scrollView.vscrollbar_policy = St.PolicyType.NEVER;
+ 
+             let widget = obj.sourceBox;
+             let [, natHeight] = widget.get_preferred_height(-1);
+@@ -268,7 +267,7 @@ var NotificationsBox = class {
+                                transition: 'easeOutQuad',
+                                time: 0.25,
+                                onComplete() {
+-                                   this._scrollView.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC;
++                                   this._scrollView.vscrollbar_policy = St.PolicyType.AUTOMATIC;
+                                    widget.set_height(-1);
+                                },
+                                onCompleteScope: this
+@@ -934,7 +933,7 @@ var ScreenShield = class {
+ 
+         if (this._dialog) {
+             this._dialog.actor.grab_key_focus();
+-            this._dialog.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++            this._dialog.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+         }
+     }
+ 
+diff --git a/js/ui/screenshot.js b/js/ui/screenshot.js
+index 81534acae92283205ea9c5161d928752e4877520..f0e1c4825b41c4857f85c21943ba04870027102c 100644
+--- a/js/ui/screenshot.js
++++ b/js/ui/screenshot.js
+@@ -1,7 +1,6 @@
+ // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+ 
+ const Clutter = imports.gi.Clutter;
+-const Gdk = imports.gi.Gdk;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+ const Gtk = imports.gi.Gtk;
+diff --git a/js/ui/search.js b/js/ui/search.js
+index df359ae703b1b8819d092fb97ccf74b5b69f7539..c53761fc8d161a44b3e7c908e3f5ea183d58053a 100644
+--- a/js/ui/search.js
++++ b/js/ui/search.js
+@@ -4,7 +4,6 @@ const Clutter = imports.gi.Clutter;
+ const GLib = imports.gi.GLib;
+ const Gio = imports.gi.Gio;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Meta = imports.gi.Meta;
+ const Signals = imports.signals;
+ const Shell = imports.gi.Shell;
+@@ -402,7 +401,7 @@ var SearchResults = class {
+                                                y_fill: false,
+                                                overlay_scrollbars: true,
+                                                style_class: 'search-display vfade' });
+-        this._scrollView.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
++        this._scrollView.set_policy(St.PolicyType.NEVER, St.PolicyType.AUTOMATIC);
+         this._scrollView.add_actor(scrollChild);
+         let action = new Clutter.PanAction({ interpolate: true });
+         action.connect('pan', this._onPan.bind(this));
+@@ -686,10 +685,10 @@ var SearchResults = class {
+ 
+     navigateFocus(direction) {
+         let rtl = this.actor.get_text_direction() == Clutter.TextDirection.RTL;
+-        if (direction == Gtk.DirectionType.TAB_BACKWARD ||
+-            direction == (rtl ? Gtk.DirectionType.RIGHT
+-                              : Gtk.DirectionType.LEFT) ||
+-            direction == Gtk.DirectionType.UP) {
++        if (direction == St.DirectionType.TAB_BACKWARD ||
++            direction == (rtl ? St.DirectionType.RIGHT
++                              : St.DirectionType.LEFT) ||
++            direction == St.DirectionType.UP) {
+             this.actor.navigate_focus(null, direction, false);
+             return;
+         }
+diff --git a/js/ui/shellEntry.js b/js/ui/shellEntry.js
+index 642762fe2c1796918be0514056c62c9acf3da74d..0b733eb6590eeeeb3a3aa4a2b2408f056ef49cdc 100644
+--- a/js/ui/shellEntry.js
++++ b/js/ui/shellEntry.js
+@@ -1,7 +1,6 @@
+ // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+ 
+ const Clutter = imports.gi.Clutter;
+-const Gtk = imports.gi.Gtk;
+ const St = imports.gi.St;
+ 
+ const BoxPointer = imports.ui.boxpointer;
+@@ -68,7 +67,7 @@ var EntryMenu = class extends PopupMenu.PopupMenu {
+         super.open(animate);
+         this._entry.add_style_pseudo_class('focus');
+ 
+-        let direction = Gtk.DirectionType.TAB_FORWARD;
++        let direction = St.DirectionType.TAB_FORWARD;
+         if (!this.actor.navigate_focus(null, direction, false))
+             this.actor.grab_key_focus();
+     }
+diff --git a/js/ui/shellMountOperation.js b/js/ui/shellMountOperation.js
+index a49e75a8d3a6b5dc1d053e94de0bf02dedbc6779..4445ae12d064f97c987a01149e3df3c1702fb127 100644
+--- a/js/ui/shellMountOperation.js
++++ b/js/ui/shellMountOperation.js
+@@ -4,7 +4,6 @@ const Clutter = imports.gi.Clutter;
+ const Signals = imports.signals;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+ const Pango = imports.gi.Pango;
+ const St = imports.gi.St;
+ const Shell = imports.gi.Shell;
+@@ -371,8 +370,8 @@ var ShellProcessesDialog = class extends ModalDialog.ModalDialog {
+         this.contentLayout.add(this._content, { x_fill: true, y_fill: false });
+ 
+         let scrollView = new St.ScrollView({ style_class: 'mount-dialog-app-list'});
+-        scrollView.set_policy(Gtk.PolicyType.NEVER,
+-                              Gtk.PolicyType.AUTOMATIC);
++        scrollView.set_policy(St.PolicyType.NEVER,
++                              St.PolicyType.AUTOMATIC);
+         this.contentLayout.add(scrollView,
+                                { x_fill: true,
+                                  y_fill: true });
+diff --git a/js/ui/status/network.js b/js/ui/status/network.js
+index a2388bd8b207729e2715601892d80fec3628a68c..46fc51c0964e1cd5f3231d97ad84d3090c88f22c 100644
+--- a/js/ui/status/network.js
++++ b/js/ui/status/network.js
+@@ -3,7 +3,6 @@ const Clutter = imports.gi.Clutter;
+ const GLib = imports.gi.GLib;
+ const GObject = imports.gi.GObject;
+ const Gio = imports.gi.Gio;
+-const Gtk = imports.gi.Gtk;
+ const Mainloop = imports.mainloop;
+ const NM = imports.gi.NM;
+ const Signals = imports.signals;
+@@ -846,8 +845,8 @@ var NMWirelessDialog = class extends ModalDialog.ModalDialog {
+         this._scrollView = new St.ScrollView({ style_class: 'nm-dialog-scroll-view' });
+         this._scrollView.set_x_expand(true);
+         this._scrollView.set_y_expand(true);
+-        this._scrollView.set_policy(Gtk.PolicyType.NEVER,
+-                                    Gtk.PolicyType.AUTOMATIC);
++        this._scrollView.set_policy(St.PolicyType.NEVER,
++                                    St.PolicyType.AUTOMATIC);
+         this._scrollView.add_actor(this._itemBox);
+         this._stack.add_child(this._scrollView);
+ 
+diff --git a/js/ui/switcherPopup.js b/js/ui/switcherPopup.js
+index d941acf229372094bc891913fbac30180ab9b824..8e30e892f682bb9ad148353045ac686671eefe09 100644
+--- a/js/ui/switcherPopup.js
++++ b/js/ui/switcherPopup.js
+@@ -3,7 +3,6 @@
+ const Clutter = imports.gi.Clutter;
+ const GLib = imports.gi.GLib;
+ const GObject = imports.gi.GObject;
+-const Gtk = imports.gi.Gtk;
+ const Mainloop = imports.mainloop;
+ const Meta = imports.gi.Meta;
+ const Shell = imports.gi.Shell;
+@@ -365,7 +364,7 @@ var SwitcherList = GObject.registerClass({
+ 
+         this._scrollView = new St.ScrollView({ style_class: 'hfade',
+                                                enable_mouse_scrolling: false });
+-        this._scrollView.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
++        this._scrollView.set_policy(St.PolicyType.NEVER, St.PolicyType.NEVER);
+ 
+         this._scrollView.add_actor(this._list);
+         this.add_actor(this._scrollView);
+diff --git a/js/ui/tweener.js b/js/ui/tweener.js
+index 6c9869c47bb2557cec3ac1f158b6acd536c94a82..80e5838adafd0707d57d44359152a2c3ddb6e947 100644
+--- a/js/ui/tweener.js
++++ b/js/ui/tweener.js
+@@ -2,7 +2,6 @@
+ 
+ const Clutter = imports.gi.Clutter;
+ const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+ const Mainloop = imports.mainloop;
+ const Shell = imports.gi.Shell;
+ const St = imports.gi.St;
+@@ -52,7 +51,7 @@ function _wrapTweening(target, tweeningParameters) {
+         }
+     }
+ 
+-    if (!Gtk.Settings.get_default().gtk_enable_animations) {
++    if (!St.Settings.get().enable_animations) {
+         tweeningParameters['time'] = 0.000001;
+         tweeningParameters['delay'] = 0.000001;
+     }
+diff --git a/js/ui/unlockDialog.js b/js/ui/unlockDialog.js
+index cf48cd1f13ed3965f4b14b83dcd3e5323276ab19..4bab2792b6bc9cde253d8a24d860fbef74e55a0e 100644
+--- a/js/ui/unlockDialog.js
++++ b/js/ui/unlockDialog.js
+@@ -7,7 +7,6 @@ const Gdm  = imports.gi.Gdm;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+ const GnomeDesktop = imports.gi.GnomeDesktop;
+-const Gtk = imports.gi.Gtk;
+ const Meta = imports.gi.Meta;
+ const Signals = imports.signals;
+ const Shell = imports.gi.Shell;
+diff --git a/js/ui/viewSelector.js b/js/ui/viewSelector.js
+index b902eb36467c6e11d63d27c207c8d6309d3d1f3a..f19d67b12dac54be659da49adf1925b6bbfb9182 100644
+--- a/js/ui/viewSelector.js
++++ b/js/ui/viewSelector.js
+@@ -3,7 +3,6 @@
+ const Clutter = imports.gi.Clutter;
+ const Gio = imports.gi.Gio;
+ const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+ const Mainloop = imports.mainloop;
+ const Meta = imports.gi.Meta;
+ const Signals = imports.signals;
+@@ -34,8 +33,8 @@ var ViewPage = {
+ var FocusTrap = GObject.registerClass(
+ class FocusTrap extends St.Widget {
+     vfunc_navigate_focus(from, direction) {
+-        if (direction == Gtk.DirectionType.TAB_FORWARD ||
+-            direction == Gtk.DirectionType.TAB_BACKWARD)
++        if (direction == St.DirectionType.TAB_FORWARD ||
++            direction == St.DirectionType.TAB_BACKWARD)
+             return super.vfunc_navigate_focus(from, direction);
+         return false;
+     }
+@@ -397,7 +396,7 @@ var ViewSelector = class {
+ 
+     _a11yFocusPage(page) {
+         this._showAppsButton.checked = page == this._appsPage;
+-        page.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++        page.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+     }
+ 
+     _onShowAppsButtonToggled() {
+@@ -426,10 +425,10 @@ var ViewSelector = class {
+             this.startSearch(event);
+         } else if (!this._searchActive && !global.stage.key_focus) {
+             if (symbol == Clutter.Tab || symbol == Clutter.Down) {
+-                this._activePage.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++                this._activePage.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+                 return Clutter.EVENT_STOP;
+             } else if (symbol == Clutter.ISO_Left_Tab) {
+-                this._activePage.navigate_focus(null, Gtk.DirectionType.TAB_BACKWARD, false);
++                this._activePage.navigate_focus(null, St.DirectionType.TAB_BACKWARD, false);
+                 return Clutter.EVENT_STOP;
+             }
+         }
+@@ -557,22 +556,22 @@ var ViewSelector = class {
+             let arrowNext, nextDirection;
+             if (entry.get_text_direction() == Clutter.TextDirection.RTL) {
+                 arrowNext = Clutter.Left;
+-                nextDirection = Gtk.DirectionType.LEFT;
++                nextDirection = St.DirectionType.LEFT;
+             } else {
+                 arrowNext = Clutter.Right;
+-                nextDirection = Gtk.DirectionType.RIGHT;
++                nextDirection = St.DirectionType.RIGHT;
+             }
+ 
+             if (symbol == Clutter.Tab) {
+-                this._searchResults.navigateFocus(Gtk.DirectionType.TAB_FORWARD);
++                this._searchResults.navigateFocus(St.DirectionType.TAB_FORWARD);
+                 return Clutter.EVENT_STOP;
+             } else if (symbol == Clutter.ISO_Left_Tab) {
+                 this._focusTrap.can_focus = false;
+-                this._searchResults.navigateFocus(Gtk.DirectionType.TAB_BACKWARD);
++                this._searchResults.navigateFocus(St.DirectionType.TAB_BACKWARD);
+                 this._focusTrap.can_focus = true;
+                 return Clutter.EVENT_STOP;
+             } else if (symbol == Clutter.Down) {
+-                this._searchResults.navigateFocus(Gtk.DirectionType.DOWN);
++                this._searchResults.navigateFocus(St.DirectionType.DOWN);
+                 return Clutter.EVENT_STOP;
+             } else if (symbol == arrowNext && this._text.position == -1) {
+                 this._searchResults.navigateFocus(nextDirection);
+diff --git a/js/ui/windowMenu.js b/js/ui/windowMenu.js
+index 939ba15d29363ced09e62ae456c339e5a4b14015..b272b3a80fd58f8520ef360c77053c787d3ac235 100644
+--- a/js/ui/windowMenu.js
++++ b/js/ui/windowMenu.js
+@@ -1,6 +1,5 @@
+ // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*
+ 
+-const Gtk = imports.gi.Gtk;
+ const Meta = imports.gi.Meta;
+ const St = imports.gi.St;
+ const Shell = imports.gi.Shell;
+@@ -220,7 +219,7 @@ var WindowMenuManager = class {
+         this._sourceActor.show();
+ 
+         menu.open(BoxPointer.PopupAnimation.NONE);
+-        menu.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
++        menu.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+         menu.connect('open-state-changed', (menu_, isOpen) => {
+             if (isOpen)
+                 return;
+diff --git a/src/main.c b/src/main.c
+index 01155777cf6723040f515e75eb166d11f45cced6..24583778341b24ed4a3df9f54c459bec85054347 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -11,8 +11,6 @@
+ #include <cogl-pango/cogl-pango.h>
+ #include <clutter/clutter.h>
+ #include <clutter/x11/clutter-x11.h>
+-#include <gdk/gdk.h>
+-#include <gdk/gdkx.h>
+ #include <gtk/gtk.h>
+ #include <glib/gi18n-lib.h>
+ #include <girepository.h>
+diff --git a/src/shell-recorder.c b/src/shell-recorder.c
+index a80a00a23c0e4fccc3ac8f16851b31101e90f1c7..9bf36e6db41d4ea310523d38a5daac77eaf7757f 100644
+--- a/src/shell-recorder.c
++++ b/src/shell-recorder.c
+@@ -12,7 +12,6 @@
+ #include <gst/gst.h>
+ 
+ #include <gtk/gtk.h>
+-#include <gdk/gdk.h>
+ 
+ #include <cogl/cogl.h>
+ #include <meta/meta-cursor-tracker.h>
+@@ -52,8 +51,6 @@ struct _ShellRecorder {
+   int stage_width;
+   int stage_height;
+ 
+-  GdkScreen *gdk_screen;
+-
+   int pointer_x;
+   int pointer_y;
+ 
+@@ -210,8 +207,6 @@ shell_recorder_init (ShellRecorder *recorder)
+ 
+   shell_recorder_src_register ();
+ 
+-  recorder->gdk_screen = gdk_screen_get_default ();
+-
+   recorder->memory_target = get_memory_target();
+ 
+   recorder->a11y_settings = g_settings_new (A11Y_APPS_SCHEMA);
+diff --git a/src/shell-stack.c b/src/shell-stack.c
+index f04bb58df3370bc87b8c3ef330378d884027b153..7fc7609252d843983cf422a5c6a3767b9524d5e8 100644
+--- a/src/shell-stack.c
++++ b/src/shell-stack.c
+@@ -146,7 +146,7 @@ shell_stack_get_preferred_width (ClutterActor *actor,
+ static gboolean
+ shell_stack_navigate_focus (StWidget         *widget,
+                             ClutterActor     *from,
+-                            GtkDirectionType  direction)
++                            StDirectionType   direction)
+ {
+   ClutterActor *top_actor;
+ 
+diff --git a/src/shell-util.c b/src/shell-util.c
+index ed659307814a2650b829c787e130d93c0147e346..95d9f8e142a158061f55b68b4b70310a180a8140 100644
+--- a/src/shell-util.c
++++ b/src/shell-util.c
+@@ -19,7 +19,6 @@
+ #include <glib/gi18n-lib.h>
+ #include <gtk/gtk.h>
+ #include <gdk-pixbuf/gdk-pixbuf.h>
+-#include <gdk/gdkx.h>
+ #include <meta/meta-shaped-texture.h>
+ 
+ #include <locale.h>
+diff --git a/src/shell-window-tracker.c b/src/shell-window-tracker.c
+index f51bea370b53dcf4576b2445a350ef01e47e5eed..a0ba88450db67c285302250b788798f92cebe13f 100644
+--- a/src/shell-window-tracker.c
++++ b/src/shell-window-tracker.c
+@@ -5,10 +5,6 @@
+ #include <string.h>
+ #include <stdlib.h>
+ 
+-#include <X11/Xlib.h>
+-#include <X11/Xatom.h>
+-#include <gdk/gdk.h>
+-#include <gdk/gdkx.h>
+ #include <meta/display.h>
+ #include <meta/group.h>
+ #include <meta/util.h>
+diff --git a/src/st/meson.build b/src/st/meson.build
+index 97ce6134d904c273e37a6a6acbe262dc26c43e0f..21756eb07f952be1541a30dec4f6d4f995546914 100644
+--- a/src/st/meson.build
++++ b/src/st/meson.build
+@@ -17,6 +17,7 @@ st_headers = [
+   'st-scrollable.h',
+   'st-scroll-bar.h',
+   'st-scroll-view.h',
++  'st-settings.h',
+   'st-shadow.h',
+   'st-texture-cache.h',
+   'st-theme.h',
+@@ -70,6 +71,7 @@ st_sources = [
+   'st-scrollable.c',
+   'st-scroll-bar.c',
+   'st-scroll-view.c',
++  'st-settings.c',
+   'st-shadow.c',
+   'st-texture-cache.c',
+   'st-theme.c',
+diff --git a/src/st/st-bin.c b/src/st/st-bin.c
+index 21b36876a6505a51e36156fd7fb33dd11e7c3861..f013909e8845ea6fc6801da618ef357c35665e26 100644
+--- a/src/st/st-bin.c
++++ b/src/st/st-bin.c
+@@ -200,7 +200,7 @@ st_bin_popup_menu (StWidget *widget)
+ static gboolean
+ st_bin_navigate_focus (StWidget         *widget,
+                        ClutterActor     *from,
+-                       GtkDirectionType  direction)
++                       StDirectionType   direction)
+ {
+   StBinPrivate *priv = st_bin_get_instance_private (ST_BIN (widget));
+   ClutterActor *bin_actor = CLUTTER_ACTOR (widget);
+diff --git a/src/st/st-entry.c b/src/st/st-entry.c
+index d23eeb2c76ba09c0633636c4f53b17d8acc5e4b7..2d1de36ef9f7b4664b5063be9ec17ab75f975804 100644
+--- a/src/st/st-entry.c
++++ b/src/st/st-entry.c
+@@ -56,6 +56,7 @@
+ 
+ #include "st-icon.h"
+ #include "st-label.h"
++#include "st-settings.h"
+ #include "st-widget.h"
+ #include "st-texture-cache.h"
+ #include "st-clipboard.h"
+@@ -330,7 +331,7 @@ st_entry_style_changed (StWidget *self)
+ static gboolean
+ st_entry_navigate_focus (StWidget         *widget,
+                          ClutterActor     *from,
+-                         GtkDirectionType  direction)
++                         StDirectionType   direction)
+ {
+   StEntryPrivate *priv = ST_ENTRY_PRIV (widget);
+ 
+@@ -644,29 +645,32 @@ clutter_text_button_press_event (ClutterActor       *actor,
+                                  gpointer            user_data)
+ {
+   StEntryPrivate *priv = ST_ENTRY_PRIV (user_data);
+-  GtkSettings *settings = gtk_settings_get_default ();
+-  gboolean primary_paste_enabled;
+ 
+-  g_object_get (settings,
+-                "gtk-enable-primary-paste", &primary_paste_enabled,
+-                NULL);
+-
+-  if (primary_paste_enabled && event->button == 2
+-      && clutter_text_get_editable (CLUTTER_TEXT (priv->entry)))
++  if (event->button == 2 &&
++      clutter_text_get_editable (CLUTTER_TEXT (priv->entry)))
+     {
+-      StClipboard *clipboard;
++      StSettings *settings;
++      gboolean primary_paste_enabled;
+ 
+-      clipboard = st_clipboard_get_default ();
++      settings = st_settings_get ();
++      g_object_get (settings, "primary-paste", &primary_paste_enabled, NULL);
+ 
+-      /* By the time the clipboard callback is called,
+-       * the rest of the signal handlers will have
+-       * run, making the text cursor to be in the correct
+-       * place.
+-       */
+-      st_clipboard_get_text (clipboard,
+-                             ST_CLIPBOARD_TYPE_PRIMARY,
+-                             st_entry_clipboard_callback,
+-                             user_data);
++      if (primary_paste_enabled)
++        {
++          StClipboard *clipboard;
++
++          clipboard = st_clipboard_get_default ();
++
++          /* By the time the clipboard callback is called,
++           * the rest of the signal handlers will have
++           * run, making the text cursor to be in the correct
++           * place.
++           */
++          st_clipboard_get_text (clipboard,
++                                 ST_CLIPBOARD_TYPE_PRIMARY,
++                                 st_entry_clipboard_callback,
++                                 user_data);
++        }
+     }
+ 
+   return FALSE;
+diff --git a/src/st/st-focus-manager.c b/src/st/st-focus-manager.c
+index 93f74157e04d53ea215b5b212757cdcdce20eb06..0753d7902901638c07c1eb2825537fad469a8110 100644
+--- a/src/st/st-focus-manager.c
++++ b/src/st/st-focus-manager.c
+@@ -75,7 +75,7 @@ st_focus_manager_stage_event (ClutterActor *stage,
+ 			      gpointer      user_data)
+ {
+   StFocusManager *manager = user_data;
+-  GtkDirectionType direction;
++  StDirectionType direction;
+   gboolean wrap_around = FALSE;
+   ClutterActor *focused, *group;
+ 
+@@ -85,26 +85,26 @@ st_focus_manager_stage_event (ClutterActor *stage,
+   switch (event->key.keyval)
+     {
+     case CLUTTER_KEY_Up:
+-      direction = GTK_DIR_UP;
++      direction = ST_DIR_UP;
+       break;
+     case CLUTTER_KEY_Down:
+-      direction = GTK_DIR_DOWN;
++      direction = ST_DIR_DOWN;
+       break;
+     case CLUTTER_KEY_Left:
+-      direction = GTK_DIR_LEFT;
++      direction = ST_DIR_LEFT;
+       break;
+     case CLUTTER_KEY_Right:
+-      direction = GTK_DIR_RIGHT;
++      direction = ST_DIR_RIGHT;
+       break;
+     case CLUTTER_KEY_Tab:
+       if (event->key.modifier_state & CLUTTER_SHIFT_MASK)
+-        direction = GTK_DIR_TAB_BACKWARD;
++        direction = ST_DIR_TAB_BACKWARD;
+       else
+-        direction = GTK_DIR_TAB_FORWARD;
++        direction = ST_DIR_TAB_FORWARD;
+       wrap_around = TRUE;
+       break;
+     case CLUTTER_KEY_ISO_Left_Tab:
+-      direction = GTK_DIR_TAB_BACKWARD;
++      direction = ST_DIR_TAB_BACKWARD;
+       wrap_around = TRUE;
+       break;
+ 
+diff --git a/src/st/st-scroll-view.c b/src/st/st-scroll-view.c
+index fc0db1c998e01678fe4e9de9c4d055667ece402f..1a83ad445a8ef33bbf536bfc1430c08206deef17 100644
+--- a/src/st/st-scroll-view.c
++++ b/src/st/st-scroll-view.c
+@@ -58,6 +58,7 @@
+  * detailed description of the considerations involved.
+  */
+ 
++#include "st-enum-types.h"
+ #include "st-scroll-view.h"
+ #include "st-scroll-bar.h"
+ #include "st-scrollable.h"
+@@ -82,8 +83,8 @@ struct _StScrollViewPrivate
+   StAdjustment *vadjustment;
+   ClutterActor *vscroll;
+ 
+-  GtkPolicyType hscrollbar_policy;
+-  GtkPolicyType vscrollbar_policy;
++  StPolicyType hscrollbar_policy;
++  StPolicyType vscrollbar_policy;
+ 
+   gfloat        row_size;
+   gfloat        column_size;
+@@ -372,12 +373,12 @@ st_scroll_view_get_preferred_width (ClutterActor *actor,
+ 
+   switch (priv->hscrollbar_policy)
+     {
+-    case GTK_POLICY_NEVER:
++    case ST_POLICY_NEVER:
+       min_width = child_min_width;
+       break;
+-    case GTK_POLICY_ALWAYS:
+-    case GTK_POLICY_AUTOMATIC:
+-    case GTK_POLICY_EXTERNAL:
++    case ST_POLICY_ALWAYS:
++    case ST_POLICY_AUTOMATIC:
++    case ST_POLICY_EXTERNAL:
+       /* Should theoretically use the min width of the hscrollbar,
+        * but that's not cleanly defined at the moment */
+       min_width = 0;
+@@ -389,14 +390,14 @@ st_scroll_view_get_preferred_width (ClutterActor *actor,
+ 
+   switch (priv->vscrollbar_policy)
+     {
+-    case GTK_POLICY_NEVER:
+-    case GTK_POLICY_EXTERNAL:
++    case ST_POLICY_NEVER:
++    case ST_POLICY_EXTERNAL:
+       account_for_vscrollbar = FALSE;
+       break;
+-    case GTK_POLICY_ALWAYS:
++    case ST_POLICY_ALWAYS:
+       account_for_vscrollbar = !priv->overlay_scrollbars;
+       break;
+-    case GTK_POLICY_AUTOMATIC:
++    case ST_POLICY_AUTOMATIC:
+       /* For automatic scrollbars, we always request space for the vertical
+        * scrollbar; we won't know whether we actually need one until our
+        * height is assigned in allocate().
+@@ -454,11 +455,11 @@ st_scroll_view_get_preferred_height (ClutterActor *actor,
+ 
+   switch (priv->vscrollbar_policy)
+     {
+-    case GTK_POLICY_NEVER:
+-    case GTK_POLICY_EXTERNAL:
++    case ST_POLICY_NEVER:
++    case ST_POLICY_EXTERNAL:
+       break;
+-    case GTK_POLICY_ALWAYS:
+-    case GTK_POLICY_AUTOMATIC:
++    case ST_POLICY_ALWAYS:
++    case ST_POLICY_AUTOMATIC:
+       /* We've requested space for the scrollbar, subtract it back out */
+       for_width -= sb_width;
+       break;
+@@ -469,14 +470,14 @@ st_scroll_view_get_preferred_height (ClutterActor *actor,
+ 
+   switch (priv->hscrollbar_policy)
+     {
+-    case GTK_POLICY_NEVER:
+-    case GTK_POLICY_EXTERNAL:
++    case ST_POLICY_NEVER:
++    case ST_POLICY_EXTERNAL:
+       account_for_hscrollbar = FALSE;
+       break;
+-    case GTK_POLICY_ALWAYS:
++    case ST_POLICY_ALWAYS:
+       account_for_hscrollbar = !priv->overlay_scrollbars;
+       break;
+-    case GTK_POLICY_AUTOMATIC:
++    case ST_POLICY_AUTOMATIC:
+       /* For automatic scrollbars, we always request space for the horizontal
+        * scrollbar; we won't know whether we actually need one until our
+        * width is assigned in allocate().
+@@ -495,12 +496,12 @@ st_scroll_view_get_preferred_height (ClutterActor *actor,
+ 
+   switch (priv->vscrollbar_policy)
+     {
+-    case GTK_POLICY_NEVER:
++    case ST_POLICY_NEVER:
+       min_height = child_min_height;
+       break;
+-    case GTK_POLICY_ALWAYS:
+-    case GTK_POLICY_AUTOMATIC:
+-    case GTK_POLICY_EXTERNAL:
++    case ST_POLICY_ALWAYS:
++    case ST_POLICY_AUTOMATIC:
++    case ST_POLICY_EXTERNAL:
+       /* Should theoretically use the min height of the vscrollbar,
+        * but that's not cleanly defined at the moment */
+       min_height = 0;
+@@ -571,9 +572,9 @@ st_scroll_view_allocate (ClutterActor          *actor,
+       clutter_actor_get_preferred_width (priv->child, -1,
+                                          &child_min_width, NULL);
+ 
+-      if (priv->vscrollbar_policy == GTK_POLICY_AUTOMATIC)
++      if (priv->vscrollbar_policy == ST_POLICY_AUTOMATIC)
+         {
+-          if (priv->hscrollbar_policy == GTK_POLICY_AUTOMATIC)
++          if (priv->hscrollbar_policy == ST_POLICY_AUTOMATIC)
+             {
+               /* Pass one, try without a vertical scrollbar */
+               clutter_actor_get_preferred_height (priv->child, avail_width, &child_min_height, NULL);
+@@ -591,7 +592,7 @@ st_scroll_view_allocate (ClutterActor          *actor,
+             }
+           else
+             {
+-              hscrollbar_visible = priv->hscrollbar_policy == GTK_POLICY_ALWAYS;
++              hscrollbar_visible = priv->hscrollbar_policy == ST_POLICY_ALWAYS;
+ 
+               /* try without a vertical scrollbar */
+               clutter_actor_get_preferred_height (priv->child, avail_width, &child_min_height, NULL);
+@@ -600,20 +601,20 @@ st_scroll_view_allocate (ClutterActor          *actor,
+         }
+       else
+         {
+-          vscrollbar_visible = priv->vscrollbar_policy == GTK_POLICY_ALWAYS;
++          vscrollbar_visible = priv->vscrollbar_policy == ST_POLICY_ALWAYS;
+ 
+-          if (priv->hscrollbar_policy == GTK_POLICY_AUTOMATIC)
++          if (priv->hscrollbar_policy == ST_POLICY_AUTOMATIC)
+             hscrollbar_visible = child_min_width > avail_height - (vscrollbar_visible ? 0 : sb_width);
+           else
+-            hscrollbar_visible = priv->hscrollbar_policy == GTK_POLICY_ALWAYS;
++            hscrollbar_visible = priv->hscrollbar_policy == ST_POLICY_ALWAYS;
+         }
+     }
+   else
+     {
+-      hscrollbar_visible = priv->hscrollbar_policy != GTK_POLICY_NEVER &&
+-                           priv->hscrollbar_policy != GTK_POLICY_EXTERNAL;
+-      vscrollbar_visible = priv->vscrollbar_policy != GTK_POLICY_NEVER &&
+-                           priv->vscrollbar_policy != GTK_POLICY_EXTERNAL;
++      hscrollbar_visible = priv->hscrollbar_policy != ST_POLICY_NEVER &&
++                           priv->hscrollbar_policy != ST_POLICY_EXTERNAL;
++      vscrollbar_visible = priv->vscrollbar_policy != ST_POLICY_NEVER &&
++                           priv->vscrollbar_policy != ST_POLICY_EXTERNAL;
+     }
+ 
+   /* Whether or not we show the scrollbars, if the scrollbars are visible
+@@ -661,12 +662,12 @@ st_scroll_view_allocate (ClutterActor          *actor,
+    * Fold this into the scrollbar sizes to simplify the rest of the
+    * computations.
+    */
+-  if (priv->hscrollbar_policy == GTK_POLICY_NEVER ||
+-      priv->hscrollbar_policy == GTK_POLICY_EXTERNAL ||
++  if (priv->hscrollbar_policy == ST_POLICY_NEVER ||
++      priv->hscrollbar_policy == ST_POLICY_EXTERNAL ||
+       priv->overlay_scrollbars)
+     sb_height = 0;
+-  if (priv->vscrollbar_policy == GTK_POLICY_NEVER ||
+-      priv->vscrollbar_policy == GTK_POLICY_EXTERNAL ||
++  if (priv->vscrollbar_policy == ST_POLICY_NEVER ||
++      priv->vscrollbar_policy == ST_POLICY_EXTERNAL ||
+       priv->overlay_scrollbars)
+     sb_width = 0;
+ 
+@@ -828,16 +829,16 @@ st_scroll_view_class_init (StScrollViewClass *klass)
+   pspec = g_param_spec_enum ("vscrollbar-policy",
+                              "Vertical Scrollbar Policy",
+                              "When the vertical scrollbar is displayed",
+-                             GTK_TYPE_POLICY_TYPE,
+-                             GTK_POLICY_AUTOMATIC,
++                             ST_TYPE_POLICY_TYPE,
++                             ST_POLICY_AUTOMATIC,
+                              G_PARAM_READWRITE);
+   g_object_class_install_property (object_class, PROP_VSCROLLBAR_POLICY, pspec);
+ 
+   pspec = g_param_spec_enum ("hscrollbar-policy",
+                              "Horizontal Scrollbar Policy",
+                              "When the horizontal scrollbar is displayed",
+-                             GTK_TYPE_POLICY_TYPE,
+-                             GTK_POLICY_AUTOMATIC,
++                             ST_TYPE_POLICY_TYPE,
++                             ST_POLICY_AUTOMATIC,
+                              G_PARAM_READWRITE);
+   g_object_class_install_property (object_class, PROP_HSCROLLBAR_POLICY, pspec);
+ 
+@@ -879,8 +880,8 @@ st_scroll_view_init (StScrollView *self)
+ {
+   StScrollViewPrivate *priv = self->priv = st_scroll_view_get_instance_private (self);
+ 
+-  priv->hscrollbar_policy = GTK_POLICY_AUTOMATIC;
+-  priv->vscrollbar_policy = GTK_POLICY_AUTOMATIC;
++  priv->hscrollbar_policy = ST_POLICY_AUTOMATIC;
++  priv->vscrollbar_policy = ST_POLICY_AUTOMATIC;
+ 
+   priv->hadjustment = g_object_new (ST_TYPE_ADJUSTMENT, NULL);
+   priv->hscroll = g_object_new (ST_TYPE_SCROLL_BAR,
+@@ -1187,8 +1188,8 @@ st_scroll_view_get_overlay_scrollbars (StScrollView *scroll)
+  */
+ void
+ st_scroll_view_set_policy (StScrollView   *scroll,
+-                           GtkPolicyType   hscroll,
+-                           GtkPolicyType   vscroll)
++                           StPolicyType    hscroll,
++                           StPolicyType    vscroll)
+ {
+   StScrollViewPrivate *priv;
+ 
+diff --git a/src/st/st-scroll-view.h b/src/st/st-scroll-view.h
+index 35a27a6529349414d664f075e1f3611576f9f7d3..2f2c31d6c925cd54d3176cde4075b2ca66712482 100644
+--- a/src/st/st-scroll-view.h
++++ b/src/st/st-scroll-view.h
+@@ -34,6 +34,14 @@ G_BEGIN_DECLS
+ #define ST_TYPE_SCROLL_VIEW            (st_scroll_view_get_type())
+ G_DECLARE_FINAL_TYPE (StScrollView, st_scroll_view, ST, SCROLL_VIEW, StBin)
+ 
++typedef enum
++{
++  ST_POLICY_ALWAYS,
++  ST_POLICY_AUTOMATIC,
++  ST_POLICY_NEVER,
++  ST_POLICY_EXTERNAL,
++} StPolicyType;
++
+ typedef struct _StScrollViewPrivate   StScrollViewPrivate;
+ 
+ /**
+@@ -72,8 +80,8 @@ void          st_scroll_view_set_overlay_scrollbars (StScrollView *scroll,
+ gboolean      st_scroll_view_get_overlay_scrollbars (StScrollView *scroll);
+ 
+ void          st_scroll_view_set_policy          (StScrollView   *scroll,
+-                                                  GtkPolicyType   hscroll,
+-                                                  GtkPolicyType   vscroll);
++                                                  StPolicyType    hscroll,
++                                                  StPolicyType    vscroll);
+ void          st_scroll_view_update_fade_effect  (StScrollView *scroll,
+                                                   float vfade_offset,
+                                                   float hfade_offset);
+diff --git a/src/st/st-settings.c b/src/st/st-settings.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..218df96e0369e834feacf24e5da752878919493c
+--- /dev/null
++++ b/src/st/st-settings.c
+@@ -0,0 +1,230 @@
++/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
++/*
++ * st-settings.c: Global settings
++ *
++ * Copyright 2019 Red Hat, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU Lesser General Public License,
++ * version 2.1, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT ANY
++ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <gio/gio.h>
++
++#include "st-settings.h"
++
++#define KEY_ENABLE_ANIMATIONS "enable-animations"
++#define KEY_PRIMARY_PASTE     "gtk-enable-primary-paste"
++#define KEY_DRAG_THRESHOLD    "drag-threshold"
++#define KEY_GTK_THEME         "gtk-theme"
++#define KEY_GTK_ICON_THEME    "icon-theme"
++
++enum {
++  PROP_0,
++  PROP_ENABLE_ANIMATIONS,
++  PROP_PRIMARY_PASTE,
++  PROP_DRAG_THRESHOLD,
++  PROP_GTK_THEME,
++  PROP_GTK_ICON_THEME,
++  N_PROPS
++};
++
++GParamSpec *props[N_PROPS] = { 0 };
++
++struct _StSettings
++{
++  GObject parent_object;
++  GSettings *interface_settings;
++  GSettings *mouse_settings;
++
++  gchar *gtk_theme;
++  gchar *gtk_icon_theme;
++  gboolean enable_animations;
++  gboolean primary_paste;
++  gint drag_threshold;
++};
++
++G_DEFINE_TYPE (StSettings, st_settings, G_TYPE_OBJECT)
++
++static void
++st_settings_finalize (GObject *object)
++{
++  StSettings *settings = ST_SETTINGS (object);
++
++  g_object_unref (settings->interface_settings);
++  g_object_unref (settings->mouse_settings);
++  g_free (settings->gtk_theme);
++  g_free (settings->gtk_icon_theme);
++
++  G_OBJECT_CLASS (st_settings_parent_class)->finalize (object);
++}
++
++static void
++st_settings_set_property (GObject      *object,
++                          guint         prop_id,
++                          const GValue *value,
++                          GParamSpec   *pspec)
++{
++  G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
++}
++
++static void
++st_settings_get_property (GObject    *object,
++                          guint       prop_id,
++                          GValue     *value,
++                          GParamSpec *pspec)
++{
++  StSettings *settings = ST_SETTINGS (object);
++
++  switch (prop_id)
++    {
++    case PROP_ENABLE_ANIMATIONS:
++      g_value_set_boolean (value, settings->enable_animations);
++      break;
++    case PROP_PRIMARY_PASTE:
++      g_value_set_boolean (value, settings->primary_paste);
++      break;
++    case PROP_DRAG_THRESHOLD:
++      g_value_set_int (value, settings->drag_threshold);
++      break;
++    case PROP_GTK_THEME:
++      g_value_set_string (value, settings->gtk_theme);
++      break;
++    case PROP_GTK_ICON_THEME:
++      g_value_set_string (value, settings->gtk_icon_theme);
++      break;
++    default:
++      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
++    }
++}
++
++static void
++st_settings_class_init (StSettingsClass *klass)
++{
++  GObjectClass *object_class = G_OBJECT_CLASS (klass);
++
++  object_class->finalize = st_settings_finalize;
++  object_class->set_property = st_settings_set_property;
++  object_class->get_property = st_settings_get_property;
++
++  props[PROP_ENABLE_ANIMATIONS] = g_param_spec_boolean ("enable-animations",
++                                                        "Enable animations",
++                                                        "Enable animations",
++                                                        TRUE,
++                                                        G_PARAM_READABLE);
++  props[PROP_PRIMARY_PASTE] = g_param_spec_boolean ("primary-paste",
++                                                    "Primary paste",
++                                                    "Primary paste",
++                                                    TRUE,
++                                                    G_PARAM_READABLE);
++  props[PROP_DRAG_THRESHOLD] = g_param_spec_int ("drag-threshold",
++                                                 "Drag threshold",
++                                                 "Drag threshold",
++                                                 0, G_MAXINT, 8,
++                                                 G_PARAM_READABLE);
++  props[PROP_GTK_THEME] = g_param_spec_string ("gtk-theme",
++                                               "GTK+ Theme",
++                                               "GTK+ Theme",
++                                               "",
++                                               G_PARAM_READABLE);
++  props[PROP_GTK_ICON_THEME] = g_param_spec_string ("gtk-icon-theme",
++                                                    "GTK+ Icon Theme",
++                                                    "GTK+ Icon Theme",
++                                                    "",
++                                                    G_PARAM_READABLE);
++
++  g_object_class_install_properties (object_class, N_PROPS, props);
++}
++
++static void
++on_interface_settings_changed (GSettings   *g_settings,
++                               const gchar *key,
++                               StSettings  *settings)
++{
++  if (g_str_equal (key, KEY_ENABLE_ANIMATIONS))
++    {
++      settings->enable_animations = g_settings_get_boolean (g_settings, key);
++      g_object_notify_by_pspec (G_OBJECT (settings), props[PROP_ENABLE_ANIMATIONS]);
++    }
++  else if (g_str_equal (key, KEY_PRIMARY_PASTE))
++    {
++      settings->primary_paste = g_settings_get_boolean (g_settings, key);
++      g_object_notify_by_pspec (G_OBJECT (settings), props[PROP_PRIMARY_PASTE]);
++    }
++  else if (g_str_equal (key, KEY_GTK_THEME))
++    {
++      g_free (settings->gtk_theme);
++      settings->gtk_theme = g_settings_get_string (g_settings, key);
++      g_object_notify_by_pspec (G_OBJECT (settings), props[PROP_GTK_THEME]);
++    }
++  else if (g_str_equal (key, KEY_GTK_ICON_THEME))
++    {
++      g_free (settings->gtk_icon_theme);
++      settings->gtk_icon_theme = g_settings_get_string (g_settings, key);
++      g_object_notify_by_pspec (G_OBJECT (settings),
++                                props[PROP_GTK_ICON_THEME]);
++    }
++}
++
++static void
++on_mouse_settings_changed (GSettings   *g_settings,
++                           const gchar *key,
++                           StSettings  *settings)
++{
++  if (g_str_equal (key, KEY_DRAG_THRESHOLD))
++    {
++      settings->drag_threshold = g_settings_get_int (g_settings, key);
++      g_object_notify_by_pspec (G_OBJECT (settings), props[PROP_DRAG_THRESHOLD]);
++    }
++}
++
++static void
++st_settings_init (StSettings *settings)
++{
++  settings->interface_settings = g_settings_new ("org.gnome.desktop.interface");
++  g_signal_connect (settings->interface_settings, "changed",
++                    G_CALLBACK (on_interface_settings_changed), settings);
++
++  settings->mouse_settings = g_settings_new ("org.gnome.settings-daemon.peripherals.mouse");
++  g_signal_connect (settings->interface_settings, "changed",
++                    G_CALLBACK (on_mouse_settings_changed), settings);
++
++  settings->enable_animations = g_settings_get_boolean (settings->interface_settings,
++                                                        KEY_ENABLE_ANIMATIONS);
++  settings->primary_paste = g_settings_get_boolean (settings->interface_settings,
++                                                    KEY_PRIMARY_PASTE);
++  settings->gtk_theme = g_settings_get_string (settings->interface_settings,
++                                               KEY_GTK_THEME);
++  settings->drag_threshold = g_settings_get_int (settings->mouse_settings,
++                                                 KEY_DRAG_THRESHOLD);
++}
++
++/**
++ * st_settings_get:
++ *
++ * Gets the #StSettings
++ *
++ * Returns: (transfer none): a settings object
++ **/
++StSettings *
++st_settings_get (void)
++{
++  static StSettings *settings = NULL;
++
++  if (!settings)
++    settings = g_object_new (ST_TYPE_SETTINGS, NULL);
++
++  return settings;
++}
+diff --git a/src/st/st-settings.h b/src/st/st-settings.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..a57885c40e4ebf1f425b2e9b3843b5a59d02348a
+--- /dev/null
++++ b/src/st/st-settings.h
+@@ -0,0 +1,34 @@
++/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
++/*
++ * st-settings.h: Global settings
++ *
++ * Copyright 2019 Red Hat, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU Lesser General Public License,
++ * version 2.1, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT ANY
++ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#if !defined(ST_H_INSIDE) && !defined(ST_COMPILATION)
++#error "Only <st/st.h> can be included directly.h"
++#endif
++
++#ifndef __ST_SETTINGS_H__
++#define __ST_SETTINGS_H__
++
++G_BEGIN_DECLS
++
++#define ST_TYPE_SETTINGS (st_settings_get_type ())
++G_DECLARE_FINAL_TYPE (StSettings, st_settings, ST, SETTINGS, GObject)
++
++StSettings * st_settings_get (void);
++
++#endif /* __ST_SETTINGS_H__ */
+diff --git a/src/st/st-texture-cache.c b/src/st/st-texture-cache.c
+index d9c0a9673da0ad8fee854f060dd9e4309907e48b..1d11ce71c4339e4d72ee0d351238b1297a3d6f23 100644
+--- a/src/st/st-texture-cache.c
++++ b/src/st/st-texture-cache.c
+@@ -23,6 +23,7 @@
+ 
+ #include "st-texture-cache.h"
+ #include "st-private.h"
++#include "st-settings.h"
+ #include <gtk/gtk.h>
+ #include <string.h>
+ #include <glib.h>
+@@ -34,6 +35,7 @@
+ struct _StTextureCachePrivate
+ {
+   GtkIconTheme *icon_theme;
++  GSettings *settings;
+ 
+   /* Things that were loaded with a cache policy != NONE */
+   GHashTable *keyed_cache; /* char * -> ClutterImage* */
+@@ -131,20 +133,33 @@ st_texture_cache_evict_icons (StTextureCache *cache)
+ }
+ 
+ static void
+-on_icon_theme_changed (GtkIconTheme   *icon_theme,
++on_icon_theme_changed (StSettings     *settings,
++                       GParamSpec     *pspec,
+                        StTextureCache *cache)
+ {
++  g_autofree gchar *theme;
++
+   st_texture_cache_evict_icons (cache);
++
++  g_object_get (settings, "gtk-icon-theme", &theme, NULL);
++  gtk_icon_theme_set_custom_theme (cache->priv->icon_theme, theme);
++
+   g_signal_emit (cache, signals[ICON_THEME_CHANGED], 0);
+ }
+ 
+ static void
+ st_texture_cache_init (StTextureCache *self)
+ {
++  StSettings *settings;
++
+   self->priv = g_new0 (StTextureCachePrivate, 1);
+ 
+-  self->priv->icon_theme = gtk_icon_theme_get_default ();
+-  g_signal_connect (self->priv->icon_theme, "changed",
++  self->priv->icon_theme = gtk_icon_theme_new ();
++  gtk_icon_theme_add_resource_path (self->priv->icon_theme,
++                                    "/org/gnome/shell/theme/icons");
++
++  settings = st_settings_get ();
++  g_signal_connect (settings, "notify::gtk-icon-theme",
+                     G_CALLBACK (on_icon_theme_changed), self);
+ 
+   self->priv->keyed_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
+@@ -158,6 +173,7 @@ st_texture_cache_init (StTextureCache *self)
+   self->priv->file_monitors = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal,
+                                                      g_object_unref, g_object_unref);
+ 
++  on_icon_theme_changed (settings, NULL, self);
+ }
+ 
+ static void
+@@ -165,13 +181,8 @@ st_texture_cache_dispose (GObject *object)
+ {
+   StTextureCache *self = (StTextureCache*)object;
+ 
+-  if (self->priv->icon_theme)
+-    {
+-      g_signal_handlers_disconnect_by_func (self->priv->icon_theme,
+-                                            (gpointer) on_icon_theme_changed,
+-                                            self);
+-      self->priv->icon_theme = NULL;
+-    }
++  g_clear_object (&self->priv->settings);
++  g_clear_object (&self->priv->icon_theme);
+ 
+   g_clear_pointer (&self->priv->keyed_cache, g_hash_table_destroy);
+   g_clear_pointer (&self->priv->keyed_surface_cache, g_hash_table_destroy);
+diff --git a/src/st/st-widget.c b/src/st/st-widget.c
+index 38a078c0254ced65731201c23376876e5c13554f..d12dbb3e285fe7d878830b27016a019cd0f33232 100644
+--- a/src/st/st-widget.c
++++ b/src/st/st-widget.c
+@@ -37,6 +37,7 @@
+ 
+ #include "st-label.h"
+ #include "st-private.h"
++#include "st-settings.h"
+ #include "st-texture-cache.h"
+ #include "st-theme-context.h"
+ #include "st-theme-node-transition.h"
+@@ -44,7 +45,6 @@
+ 
+ #include "st-widget-accessible.h"
+ 
+-#include <gtk/gtk.h>
+ #include <atk/atk-enum-types.h>
+ 
+ /* This is set in stone and also hard-coded in GDK. */
+@@ -136,7 +136,7 @@ static void st_widget_recompute_style (StWidget    *widget,
+                                        StThemeNode *old_theme_node);
+ static gboolean st_widget_real_navigate_focus (StWidget         *widget,
+                                                ClutterActor     *from,
+-                                               GtkDirectionType  direction);
++                                               StDirectionType   direction);
+ 
+ static AtkObject * st_widget_get_accessible (ClutterActor *actor);
+ 
+@@ -814,7 +814,6 @@ st_widget_real_get_focus_chain (StWidget *widget)
+   return g_list_reverse (visible);
+ }
+ 
+-
+ static void
+ st_widget_class_init (StWidgetClass *klass)
+ {
+@@ -1567,6 +1566,7 @@ st_widget_recompute_style (StWidget    *widget,
+   StWidgetPrivate *priv = st_widget_get_instance_private (widget);
+   StThemeNode *new_theme_node = st_widget_get_theme_node (widget);
+   int transition_duration;
++  StSettings *settings;
+   gboolean paint_equal;
+   gboolean animations_enabled;
+ 
+@@ -1586,9 +1586,8 @@ st_widget_recompute_style (StWidget    *widget,
+ 
+   paint_equal = st_theme_node_paint_equal (old_theme_node, new_theme_node);
+ 
+-  g_object_get (gtk_settings_get_default (),
+-                "gtk-enable-animations", &animations_enabled,
+-                NULL);
++  settings = st_settings_get ();
++  g_object_get (settings, "enable-animations", &animations_enabled, NULL);
+ 
+   if (animations_enabled && transition_duration > 0)
+     {
+@@ -1848,7 +1847,7 @@ st_widget_popup_menu (StWidget *self)
+ static GList *
+ filter_by_position (GList            *children,
+                     ClutterActorBox  *rbox,
+-                    GtkDirectionType  direction)
++                    StDirectionType   direction)
+ {
+   ClutterActorBox cbox;
+   ClutterVertex abs_vertices[4];
+@@ -1868,28 +1867,28 @@ filter_by_position (GList            *children,
+        */
+       switch (direction)
+         {
+-        case GTK_DIR_UP:
++        case ST_DIR_UP:
+           if (cbox.y2 > rbox->y1 + 0.1)
+             continue;
+           break;
+ 
+-        case GTK_DIR_DOWN:
++        case ST_DIR_DOWN:
+           if (cbox.y1 < rbox->y2 - 0.1)
+             continue;
+           break;
+ 
+-        case GTK_DIR_LEFT:
++        case ST_DIR_LEFT:
+           if (cbox.x2 > rbox->x1 + 0.1)
+             continue;
+           break;
+ 
+-        case GTK_DIR_RIGHT:
++        case ST_DIR_RIGHT:
+           if (cbox.x1 < rbox->x2 - 0.1)
+             continue;
+           break;
+ 
+-        case GTK_DIR_TAB_BACKWARD:
+-        case GTK_DIR_TAB_FORWARD:
++        case ST_DIR_TAB_BACKWARD:
++        case ST_DIR_TAB_FORWARD:
+         default:
+           g_return_val_if_reached (NULL);
+         }
+@@ -1946,7 +1945,7 @@ sort_by_distance (gconstpointer  a,
+ static gboolean
+ st_widget_real_navigate_focus (StWidget         *widget,
+                                ClutterActor     *from,
+-                               GtkDirectionType  direction)
++                               StDirectionType   direction)
+ {
+   StWidgetPrivate *priv = st_widget_get_instance_private (widget);
+   ClutterActor *widget_actor, *focus_child;
+@@ -1998,15 +1997,15 @@ st_widget_real_navigate_focus (StWidget         *widget,
+     }
+ 
+   children = st_widget_get_focus_chain (widget);
+-  if (direction == GTK_DIR_TAB_FORWARD ||
+-      direction == GTK_DIR_TAB_BACKWARD)
++  if (direction == ST_DIR_TAB_FORWARD ||
++      direction == ST_DIR_TAB_BACKWARD)
+     {
+       /* At this point we know that we want to navigate focus to one of
+        * @widget's immediate children; the next one after @focus_child, or the
+        * first one if @focus_child is %NULL. (With "next" and "first" being
+        * determined by @direction.)
+        */
+-      if (direction == GTK_DIR_TAB_BACKWARD)
++      if (direction == ST_DIR_TAB_BACKWARD)
+         children = g_list_reverse (children);
+ 
+       if (focus_child)
+@@ -2044,20 +2043,20 @@ st_widget_real_navigate_focus (StWidget         *widget,
+           clutter_actor_box_from_vertices (&sort_box, abs_vertices);
+           switch (direction)
+             {
+-            case GTK_DIR_UP:
++            case ST_DIR_UP:
+               sort_box.y1 = sort_box.y2;
+               break;
+-            case GTK_DIR_DOWN:
++            case ST_DIR_DOWN:
+               sort_box.y2 = sort_box.y1;
+               break;
+-            case GTK_DIR_LEFT:
++            case ST_DIR_LEFT:
+               sort_box.x1 = sort_box.x2;
+               break;
+-            case GTK_DIR_RIGHT:
++            case ST_DIR_RIGHT:
+               sort_box.x2 = sort_box.x1;
+               break;
+-            case GTK_DIR_TAB_FORWARD:
+-            case GTK_DIR_TAB_BACKWARD:
++            case ST_DIR_TAB_FORWARD:
++            case ST_DIR_TAB_BACKWARD:
+             default:
+               g_warn_if_reached ();
+             }
+@@ -2127,7 +2126,7 @@ st_widget_real_navigate_focus (StWidget         *widget,
+ gboolean
+ st_widget_navigate_focus (StWidget         *widget,
+                           ClutterActor     *from,
+-                          GtkDirectionType  direction,
++                          StDirectionType   direction,
+                           gboolean          wrap_around)
+ {
+   g_return_val_if_fail (ST_IS_WIDGET (widget), FALSE);
+diff --git a/src/st/st-widget.h b/src/st/st-widget.h
+index 4f351ea9e49744acf1ef35ea0e725c3dd504c46e..36a6325674db68e8e7adea53e4e786c90c550b25 100644
+--- a/src/st/st-widget.h
++++ b/src/st/st-widget.h
+@@ -38,6 +38,16 @@ G_BEGIN_DECLS
+ #define ST_TYPE_WIDGET                 (st_widget_get_type ())
+ G_DECLARE_DERIVABLE_TYPE (StWidget, st_widget, ST, WIDGET, ClutterActor)
+ 
++typedef enum
++{
++  ST_DIR_TAB_FORWARD,
++  ST_DIR_TAB_BACKWARD,
++  ST_DIR_UP,
++  ST_DIR_DOWN,
++  ST_DIR_LEFT,
++  ST_DIR_RIGHT,
++} StDirectionType;
++
+ typedef struct _StWidgetClass          StWidgetClass;
+ 
+ /**
+@@ -64,7 +74,7 @@ struct _StWidgetClass
+    */
+   gboolean (* navigate_focus)      (StWidget         *self,
+                                     ClutterActor     *from,
+-                                    GtkDirectionType  direction);
++                                    StDirectionType   direction);
+   GType    (* get_accessible_type) (void);
+ 
+   GList *  (* get_focus_chain)     (StWidget         *widget);
+@@ -113,7 +123,7 @@ void                  st_widget_set_can_focus             (StWidget        *widg
+ gboolean              st_widget_get_can_focus             (StWidget        *widget);
+ gboolean              st_widget_navigate_focus            (StWidget        *widget,
+                                                            ClutterActor    *from,
+-                                                           GtkDirectionType direction,
++                                                           StDirectionType  direction,
+                                                            gboolean         wrap_around);
+ 
+ ClutterActor *        st_widget_get_label_actor           (StWidget        *widget);

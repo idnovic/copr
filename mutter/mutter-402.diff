@@ -1,0 +1,490 @@
+diff --git a/clutter/clutter/clutter-stage.c b/clutter/clutter/clutter-stage.c
+index 04367b0ee9f1f8cbe69ee96b4451ff660b9759cd..29a3ff0da5ddf72b7d80527f200605e92bf8b10d 100644
+--- a/clutter/clutter/clutter-stage.c
++++ b/clutter/clutter/clutter-stage.c
+@@ -1437,7 +1437,6 @@ _clutter_stage_do_pick_on_view (ClutterStage     *stage,
+   cairo_rectangle_int_t view_layout;
+   ClutterMainContext *context;
+   guchar pixel[4] = { 0xff, 0xff, 0xff, 0xff };
+-  CoglColor stage_pick_id;
+   gboolean dither_enabled_save;
+   ClutterActor *retval;
+   gint dirty_x;
+@@ -1449,8 +1448,6 @@ _clutter_stage_do_pick_on_view (ClutterStage     *stage,
+   float viewport_offset_x;
+   float viewport_offset_y;
+ 
+-  priv = stage->priv;
+-
+   context = _clutter_context_get_default ();
+   fb_scale = clutter_stage_view_get_scale (view);
+   clutter_stage_view_get_layout (view, &view_layout);
+@@ -1461,14 +1458,6 @@ _clutter_stage_do_pick_on_view (ClutterStage     *stage,
+ 
+   /* needed for when a context switch happens */
+   _clutter_stage_maybe_setup_viewport (stage, view);
+-
+-  /* FIXME: For some reason leaving the cogl clip stack empty causes the
+-   * picking to not work at all, so setting it the whole framebuffer content
+-   * for now. */
+-  cogl_framebuffer_push_scissor_clip (fb, 0, 0,
+-                                      view_layout.width * fb_scale,
+-                                      view_layout.height * fb_scale);
+-
+   _clutter_stage_window_get_dirty_pixel (priv->impl, view, &dirty_x, &dirty_y);
+ 
+   if (G_LIKELY (!(clutter_pick_debug_flags & CLUTTER_DEBUG_DUMP_PICK_BUFFERS)))
+@@ -1500,8 +1489,9 @@ _clutter_stage_do_pick_on_view (ClutterStage     *stage,
+                 view_layout.width, view_layout.height,
+                 view_layout.x, view_layout.y, fb_scale);
+ 
+-  cogl_color_init_from_4ub (&stage_pick_id, 255, 255, 255, 255);
+-  cogl_framebuffer_clear (fb, COGL_BUFFER_BIT_COLOR | COGL_BUFFER_BIT_DEPTH, &stage_pick_id);
++  cogl_framebuffer_clear4f (fb,
++                            COGL_BUFFER_BIT_COLOR | COGL_BUFFER_BIT_DEPTH,
++                            1.0f, 1.0f, 1.0f, 1.0f);
+ 
+   /* Disable dithering (if any) when doing the painting in pick mode */
+   dither_enabled_save = cogl_framebuffer_get_dither_enabled (fb);
+@@ -1545,8 +1535,6 @@ _clutter_stage_do_pick_on_view (ClutterStage     *stage,
+   if (G_LIKELY (!(clutter_pick_debug_flags & CLUTTER_DEBUG_DUMP_PICK_BUFFERS)))
+     cogl_framebuffer_pop_clip (fb);
+ 
+-  cogl_framebuffer_pop_clip (fb);
+-
+   _clutter_stage_dirty_viewport (stage);
+ 
+   if (pixel[0] == 0xff && pixel[1] == 0xff && pixel[2] == 0xff)
+diff --git a/clutter/clutter/cogl/clutter-stage-cogl.c b/clutter/clutter/cogl/clutter-stage-cogl.c
+index ad9dec304ea0b2cd63f00ca43df2c4e9c2b57853..60f5b81e4beea23f4aecd3a89ca32a653695f31f 100644
+--- a/clutter/clutter/cogl/clutter-stage-cogl.c
++++ b/clutter/clutter/cogl/clutter-stage-cogl.c
+@@ -982,11 +982,8 @@ clutter_stage_cogl_get_dirty_pixel (ClutterStageWindow *stage_window,
+       ClutterStageViewCogl *view_cogl = CLUTTER_STAGE_VIEW_COGL (view);
+       ClutterStageViewCoglPrivate *view_priv =
+         clutter_stage_view_cogl_get_instance_private (view_cogl);
+-      cairo_rectangle_int_t view_layout;
+       cairo_rectangle_int_t *fb_damage;
+ 
+-      clutter_stage_view_get_layout (view, &view_layout);
+-
+       fb_damage = &view_priv->damage_history[DAMAGE_HISTORY (view_priv->damage_index - 1)];
+       *x = fb_damage->x / fb_scale;
+       *y = fb_damage->y / fb_scale;
+diff --git a/cogl/cogl/cogl-attribute.c b/cogl/cogl/cogl-attribute.c
+index c0c3df7dbc9816edcc4e6d5cdf6d2145c1097e13..ec9b36301af81badadfe86af2ab136fc314003e4 100644
+--- a/cogl/cogl/cogl-attribute.c
++++ b/cogl/cogl/cogl-attribute.c
+@@ -652,7 +652,6 @@ _cogl_flush_attributes_state (CoglFramebuffer *framebuffer,
+    * pixel and the scene is just comprised of simple rectangles still
+    * in the journal. For this optimization to work we need to track
+    * when the framebuffer really does get drawn to. */
+-  _cogl_framebuffer_mark_mid_scene (framebuffer);
+   _cogl_framebuffer_mark_clear_clip_dirty (framebuffer);
+ 
+   if (G_UNLIKELY (!(flags & COGL_DRAW_SKIP_LEGACY_STATE)) &&
+diff --git a/cogl/cogl/cogl-framebuffer-private.h b/cogl/cogl/cogl-framebuffer-private.h
+index 46a1d146d3b31d304f70cfc322f03d4f8a937da2..d976a501e0f9f638d18cdac9929eb6e8f7dd809b 100644
+--- a/cogl/cogl/cogl-framebuffer-private.h
++++ b/cogl/cogl/cogl-framebuffer-private.h
+@@ -183,10 +183,6 @@ struct _CoglFramebuffer
+   int                 clear_clip_y1;
+   CoglBool            clear_clip_dirty;
+ 
+-  /* Whether something has been drawn to the buffer since the last
+-   * swap buffers or swap region. */
+-  CoglBool            mid_scene;
+-
+   /* driver specific */
+   CoglBool            dirty_bitmasks;
+   CoglFramebufferBits bits;
+@@ -270,9 +266,6 @@ _cogl_framebuffer_clear_without_flush4f (CoglFramebuffer *framebuffer,
+ void
+ _cogl_framebuffer_mark_clear_clip_dirty (CoglFramebuffer *framebuffer);
+ 
+-void
+-_cogl_framebuffer_mark_mid_scene (CoglFramebuffer *framebuffer);
+-
+ /*
+  * _cogl_framebuffer_get_clip_stack:
+  * @framebuffer: A #CoglFramebuffer
+@@ -472,6 +465,11 @@ _cogl_framebuffer_try_creating_gl_fbo (CoglContext *ctx,
+                                        CoglOffscreenAllocateFlags flags,
+                                        CoglGLFramebuffer *gl_framebuffer);
+ 
++
++void
++_cogl_framebuffer_set_viewport4fv (CoglFramebuffer *framebuffer,
++                                   float *viewport);
++
+ unsigned long
+ _cogl_framebuffer_compare (CoglFramebuffer *a,
+                            CoglFramebuffer *b,
+diff --git a/cogl/cogl/cogl-framebuffer.c b/cogl/cogl/cogl-framebuffer.c
+index 8660f910afb5bbbf5e69facef0bb0a82b25ec483..5177b98d49e91a24c1b3beb1585d21cea85c98a9 100644
+--- a/cogl/cogl/cogl-framebuffer.c
++++ b/cogl/cogl/cogl-framebuffer.c
+@@ -246,12 +246,6 @@ _cogl_framebuffer_mark_clear_clip_dirty (CoglFramebuffer *framebuffer)
+   framebuffer->clear_clip_dirty = TRUE;
+ }
+ 
+-void
+-_cogl_framebuffer_mark_mid_scene (CoglFramebuffer *framebuffer)
+-{
+-  framebuffer->mid_scene = TRUE;
+-}
+-
+ void
+ cogl_framebuffer_clear4f (CoglFramebuffer *framebuffer,
+                           unsigned long buffers,
+@@ -267,6 +261,11 @@ cogl_framebuffer_clear4f (CoglFramebuffer *framebuffer,
+   int scissor_x1;
+   int scissor_y1;
+   CoglBool saved_viewport_scissor_workaround;
++  gboolean has_depth_and_color_buffer_bits;
++
++  has_depth_and_color_buffer_bits =
++      (buffers & COGL_BUFFER_BIT_DEPTH) &&
++      (buffers & COGL_BUFFER_BIT_COLOR);
+ 
+   if (!framebuffer->depth_buffer_clear_needed &&
+       (buffers & COGL_BUFFER_BIT_DEPTH))
+@@ -313,8 +312,7 @@ cogl_framebuffer_clear4f (CoglFramebuffer *framebuffer,
+    * Note: Comparing without an epsilon is considered
+    * appropriate here.
+    */
+-  if (buffers & COGL_BUFFER_BIT_COLOR &&
+-      buffers & COGL_BUFFER_BIT_DEPTH &&
++  if (has_depth_and_color_buffer_bits &&
+       !framebuffer->clear_clip_dirty &&
+       framebuffer->clear_color_red == red &&
+       framebuffer->clear_color_green == green &&
+@@ -419,13 +417,12 @@ cogl_framebuffer_clear4f (CoglFramebuffer *framebuffer,
+ 
+ cleared:
+ 
+-  _cogl_framebuffer_mark_mid_scene (framebuffer);
+   _cogl_framebuffer_mark_clear_clip_dirty (framebuffer);
+ 
+   if (buffers & COGL_BUFFER_BIT_DEPTH)
+     framebuffer->depth_buffer_clear_needed = FALSE;
+ 
+-  if (buffers & COGL_BUFFER_BIT_COLOR && buffers & COGL_BUFFER_BIT_DEPTH)
++  if (has_depth_and_color_buffer_bits)
+     {
+       /* For our fast-path for reading back a single pixel of simple
+        * scenes where the whole frame is in the journal we need to
+@@ -439,18 +436,11 @@ cleared:
+ 
+       /* NB: A clear may be scissored so we need to track the extents
+        * that the clear is applicable too... */
+-      if (clip_stack)
+-        {
+-          _cogl_clip_stack_get_bounds (clip_stack,
+-                                       &framebuffer->clear_clip_x0,
+-                                       &framebuffer->clear_clip_y0,
+-                                       &framebuffer->clear_clip_x1,
+-                                       &framebuffer->clear_clip_y1);
+-        }
+-      else
+-        {
+-          /* FIXME: set degenerate clip */
+-        }
++      _cogl_clip_stack_get_bounds (clip_stack,
++                                   &framebuffer->clear_clip_x0,
++                                   &framebuffer->clear_clip_y0,
++                                   &framebuffer->clear_clip_x1,
++                                   &framebuffer->clear_clip_y1);
+     }
+ }
+ 
+@@ -526,6 +516,23 @@ _cogl_framebuffer_set_clip_stack (CoglFramebuffer *framebuffer,
+   framebuffer->clip_stack = stack;
+ }
+ 
++void
++_cogl_framebuffer_set_viewport4fv (CoglFramebuffer *framebuffer,
++                                   float *viewport)
++{
++  if (framebuffer->viewport_x == viewport[0] &&
++      framebuffer->viewport_y == viewport[1] &&
++      framebuffer->viewport_width == viewport[2] &&
++      framebuffer->viewport_height == viewport[3])
++    return;
++
++  framebuffer->viewport_x = viewport[0];
++  framebuffer->viewport_y = viewport[1];
++  framebuffer->viewport_width = viewport[2];
++  framebuffer->viewport_height = viewport[3];
++  framebuffer->viewport_age++;
++}
++
+ void
+ cogl_framebuffer_set_viewport (CoglFramebuffer *framebuffer,
+                                float x,
+@@ -533,8 +540,6 @@ cogl_framebuffer_set_viewport (CoglFramebuffer *framebuffer,
+                                float width,
+                                float height)
+ {
+-  CoglContext *context = framebuffer->context;
+-
+   _COGL_RETURN_IF_FAIL (width > 0 && height > 0);
+ 
+   if (framebuffer->viewport_x == x &&
+@@ -543,21 +548,10 @@ cogl_framebuffer_set_viewport (CoglFramebuffer *framebuffer,
+       framebuffer->viewport_height == height)
+     return;
+ 
+-  _cogl_framebuffer_flush_journal (framebuffer);
+-
+   framebuffer->viewport_x = x;
+   framebuffer->viewport_y = y;
+   framebuffer->viewport_width = width;
+   framebuffer->viewport_height = height;
+-  framebuffer->viewport_age++;
+-
+-  if (context->current_draw_buffer == framebuffer)
+-    {
+-      context->current_draw_buffer_changes |= COGL_FRAMEBUFFER_STATE_VIEWPORT;
+-
+-      if (context->needs_viewport_scissor_workaround)
+-        context->current_draw_buffer_changes |= COGL_FRAMEBUFFER_STATE_CLIP;
+-    }
+ }
+ 
+ float
+@@ -1162,12 +1156,7 @@ cogl_framebuffer_set_dither_enabled (CoglFramebuffer *framebuffer,
+   if (framebuffer->dither_enabled == dither_enabled)
+     return;
+ 
+-  cogl_flush (); /* Currently dithering changes aren't tracked in the journal */
+   framebuffer->dither_enabled = dither_enabled;
+-
+-  if (framebuffer->context->current_draw_buffer == framebuffer)
+-    framebuffer->context->current_draw_buffer_changes |=
+-      COGL_FRAMEBUFFER_STATE_DITHER;
+ }
+ 
+ void
+diff --git a/cogl/cogl/cogl-journal-private.h b/cogl/cogl/cogl-journal-private.h
+index 8211359fab5d80f0b6eedcaa9bc71aa8b9c4dc6f..eec31b3fd42504870be1920f0a99a4eb00515f75 100644
+--- a/cogl/cogl/cogl-journal-private.h
++++ b/cogl/cogl/cogl-journal-private.h
+@@ -78,6 +78,8 @@ typedef struct _CoglJournalEntry
+   CoglPipeline            *pipeline;
+   CoglMatrixEntry         *modelview_entry;
+   CoglClipStack           *clip_stack;
++  float                    viewport[4];
++  CoglBool                 dither_enabled;
+   /* Offset into ctx->logged_vertices */
+   size_t                   array_offset;
+   int                      n_layers;
+diff --git a/cogl/cogl/cogl-journal.c b/cogl/cogl/cogl-journal.c
+index 34d9bbbafb05d4aaacc96e53b96114ea08d90362..24ccc8b0f066a75db23a13f3c1fcd9002e3db5f9 100644
+--- a/cogl/cogl/cogl-journal.c
++++ b/cogl/cogl/cogl-journal.c
+@@ -1044,6 +1044,95 @@ compare_entry_clip_stacks (CoglJournalEntry *entry0, CoglJournalEntry *entry1)
+   return entry0->clip_stack == entry1->clip_stack;
+ }
+ 
++static void
++_cogl_journal_flush_dither_and_entries (CoglJournalEntry *batch_start,
++                                        int               batch_len,
++                                        void             *data)
++{
++  CoglJournalFlushState *state = data;
++  CoglFramebuffer *framebuffer = state->journal->framebuffer;
++  CoglContext *ctx = framebuffer->context;
++
++  COGL_STATIC_TIMER (time_flush_dither_and_entries,
++                     "Journal Flush", /* parent */
++                     "flush: viewport+dither+clip+vbo+texcoords+pipeline+entries",
++                     "The time spent flushing viewport + dither + clip + vbo + "
++                     "texcoord offsets + pipeline + entries",
++                     0 /* no application private data */);
++
++  COGL_TIMER_START (_cogl_uprof_context, time_flush_dither_and_entries);
++
++  if (G_UNLIKELY (COGL_DEBUG_ENABLED (COGL_DEBUG_BATCHING)))
++    g_print ("BATCHING:  dither batch len = %d\n", batch_len);
++
++  cogl_framebuffer_set_dither_enabled (framebuffer, batch_start->dither_enabled);
++  ctx->current_draw_buffer_changes |= COGL_FRAMEBUFFER_STATE_DITHER;
++
++  _cogl_framebuffer_flush_state (framebuffer,
++                                 framebuffer,
++                                 COGL_FRAMEBUFFER_STATE_DITHER);
++
++  batch_and_call (batch_start,
++                  batch_len,
++                  compare_entry_clip_stacks,
++                  _cogl_journal_flush_clip_stacks_and_entries,
++                  state);
++
++  COGL_TIMER_STOP (_cogl_uprof_context, time_flush_dither_and_entries);
++}
++
++static CoglBool
++compare_entry_dither_states (CoglJournalEntry *entry0, CoglJournalEntry *entry1)
++{
++  return entry0->dither_enabled == entry1->dither_enabled;
++}
++
++static void
++_cogl_journal_flush_viewport_and_entries (CoglJournalEntry *batch_start,
++                                          int               batch_len,
++                                          void             *data)
++{
++  CoglJournalFlushState *state = data;
++  CoglFramebuffer *framebuffer = state->journal->framebuffer;
++  CoglContext *ctx = framebuffer->context;
++
++  COGL_STATIC_TIMER (time_flush_viewport_and_entries,
++                     "Journal Flush", /* parent */
++                     "flush: viewport+clip+vbo+texcoords+pipeline+entries",
++                     "The time spent flushing viewport + clip + vbo + texcoord offsets + "
++                     "pipeline + entries",
++                     0 /* no application private data */);
++
++  COGL_TIMER_START (_cogl_uprof_context, time_flush_viewport_and_entries);
++
++  if (G_UNLIKELY (COGL_DEBUG_ENABLED (COGL_DEBUG_BATCHING)))
++    g_print ("BATCHING:  viewport batch len = %d\n", batch_len);
++
++  ctx->current_draw_buffer_changes |= COGL_FRAMEBUFFER_STATE_VIEWPORT;
++  if (ctx->needs_viewport_scissor_workaround)
++    ctx->current_draw_buffer_changes |= COGL_FRAMEBUFFER_STATE_CLIP;
++
++  _cogl_framebuffer_set_viewport4fv (framebuffer, batch_start->viewport);
++
++  _cogl_framebuffer_flush_state (framebuffer,
++                                 framebuffer,
++                                 COGL_FRAMEBUFFER_STATE_VIEWPORT);
++
++  batch_and_call (batch_start,
++                  batch_len,
++                  compare_entry_dither_states,
++                  _cogl_journal_flush_dither_and_entries,
++                  state);
++
++  COGL_TIMER_STOP (_cogl_uprof_context, time_flush_viewport_and_entries);
++}
++
++static CoglBool
++compare_entry_viewports (CoglJournalEntry *entry0, CoglJournalEntry *entry1)
++{
++  return memcmp (entry0->viewport, entry1->viewport, sizeof (float) * 4) == 0;
++}
++
+ /* Gets a new vertex array from the pool. A reference is taken on the
+    array so it can be treated as if it was just newly allocated */
+ static CoglAttributeBuffer *
+@@ -1331,12 +1420,14 @@ _cogl_journal_flush (CoglJournal *journal)
+   if (G_UNLIKELY (COGL_DEBUG_ENABLED (COGL_DEBUG_BATCHING)))
+     g_print ("BATCHING: journal len = %d\n", journal->entries->len);
+ 
+-  /* NB: the journal deals with flushing the modelview stack and clip
+-     state manually */
++  /* NB: the journal deals with flushing the viewport, the modelview
++   * stack and clip state manually */
+   _cogl_framebuffer_flush_state (framebuffer,
+                                  framebuffer,
+                                  COGL_FRAMEBUFFER_STATE_ALL &
+-                                 ~(COGL_FRAMEBUFFER_STATE_MODELVIEW |
++                                 ~(COGL_FRAMEBUFFER_STATE_DITHER |
++                                   COGL_FRAMEBUFFER_STATE_VIEWPORT |
++                                   COGL_FRAMEBUFFER_STATE_MODELVIEW |
+                                    COGL_FRAMEBUFFER_STATE_CLIP));
+ 
+   /* We need to mark the current modelview state of the framebuffer as
+@@ -1395,11 +1486,11 @@ _cogl_journal_flush (CoglJournal *journal)
+    *      Note: Splitting by modelview changes is skipped when are doing the
+    *      vertex transformation in software at log time.
+    */
+-  batch_and_call ((CoglJournalEntry *)journal->entries->data, /* first entry */
+-                  journal->entries->len, /* max number of entries to consider */
+-                  compare_entry_clip_stacks,
+-                  _cogl_journal_flush_clip_stacks_and_entries, /* callback */
+-                  &state); /* data */
++  batch_and_call ((CoglJournalEntry *)journal->entries->data,
++                  journal->entries->len,
++                  compare_entry_viewports,
++                  _cogl_journal_flush_viewport_and_entries,
++                  &state);
+ 
+   for (i = 0; i < state.attributes->len; i++)
+     cogl_object_unref (g_array_index (state.attributes, CoglAttribute *, i));
+@@ -1461,12 +1552,6 @@ _cogl_journal_log_quad (CoglJournal  *journal,
+ 
+   COGL_TIMER_START (_cogl_uprof_context, log_timer);
+ 
+-  /* Adding something to the journal should mean that we are in the
+-   * middle of the scene. Although this will also end up being set
+-   * when the journal is actually flushed, we set it here explicitly
+-   * so that we will know sooner */
+-  _cogl_framebuffer_mark_mid_scene (framebuffer);
+-
+   /* If the framebuffer was previously empty then we'll take a
+      reference to the current framebuffer. This reference will be
+      removed when the journal is flushed */
+@@ -1552,6 +1637,9 @@ _cogl_journal_log_quad (CoglJournal  *journal,
+ 
+   clip_stack = _cogl_framebuffer_get_clip_stack (framebuffer);
+   entry->clip_stack = _cogl_clip_stack_ref (clip_stack);
++  entry->dither_enabled = cogl_framebuffer_get_dither_enabled (framebuffer);
++
++  cogl_framebuffer_get_viewport4fv (framebuffer, entry->viewport);
+ 
+   if (G_UNLIKELY (final_pipeline != pipeline))
+     cogl_object_unref (final_pipeline);
+@@ -1582,7 +1670,7 @@ entry_to_screen_polygon (CoglFramebuffer *framebuffer,
+   CoglMatrix projection;
+   CoglMatrix modelview;
+   int i;
+-  float viewport[4];
++  const float *viewport = entry->viewport;
+ 
+   poly[0] = vertices[0];
+   poly[1] = vertices[1];
+@@ -1631,8 +1719,6 @@ entry_to_screen_polygon (CoglFramebuffer *framebuffer,
+                               poly, /* points_out */
+                               4 /* n_points */);
+ 
+-  cogl_framebuffer_get_viewport4fv (framebuffer, viewport);
+-
+ /* Scale from OpenGL normalized device coordinates (ranging from -1 to 1)
+  * to Cogl window/framebuffer coordinates (ranging from 0 to buffer-size) with
+  * (0,0) being top left. */
+diff --git a/cogl/cogl/cogl-onscreen.c b/cogl/cogl/cogl-onscreen.c
+index f5db270c825d0def7809c9035ad4b6518c636606..bd2f6f0fb0451427e9ef24355395d11667696c5d 100644
+--- a/cogl/cogl/cogl-onscreen.c
++++ b/cogl/cogl/cogl-onscreen.c
+@@ -336,7 +336,6 @@ cogl_onscreen_swap_buffers_with_damage (CoglOnscreen *onscreen,
+     }
+ 
+   onscreen->frame_counter++;
+-  framebuffer->mid_scene = FALSE;
+ }
+ 
+ void
+@@ -393,7 +392,6 @@ cogl_onscreen_swap_region (CoglOnscreen *onscreen,
+     }
+ 
+   onscreen->frame_counter++;
+-  framebuffer->mid_scene = FALSE;
+ }
+ 
+ int
+diff --git a/src/backends/x11/meta-stage-x11-nested.c b/src/backends/x11/meta-stage-x11-nested.c
+index f77e13ade23bbf244606b78165ef4af13b14efe4..3f5be96adbf867f802107ea7b0794a240a1b9e46 100644
+--- a/src/backends/x11/meta-stage-x11-nested.c
++++ b/src/backends/x11/meta-stage-x11-nested.c
+@@ -258,7 +258,7 @@ meta_stage_x11_nested_finish_frame (ClutterStageWindow *stage_window)
+     stage_nested->pipeline = cogl_pipeline_new (clutter_backend->cogl_context);
+ 
+   cogl_framebuffer_clear4f (onscreen,
+-                            COGL_BUFFER_BIT_COLOR,
++                            COGL_BUFFER_BIT_COLOR | COGL_BUFFER_BIT_DEPTH,
+                             0.0f, 0.0f, 0.0f, 1.0f);
+ 
+   for (l = meta_renderer_get_views (renderer); l; l = l->next)

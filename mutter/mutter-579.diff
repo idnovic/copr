@@ -1,0 +1,12 @@
+diff --git a/src/backends/x11/meta-backend-x11.c b/src/backends/x11/meta-backend-x11.c
+index c10365f9d8df7a9519c57baed62c665cfe558640..c5794b20f7aa9ce51f4a0ac4b4ddd7bfec3896a0 100644
+--- a/src/backends/x11/meta-backend-x11.c
++++ b/src/backends/x11/meta-backend-x11.c
+@@ -357,7 +357,6 @@ handle_host_xevent (MetaBackend *backend,
+         {
+           switch (xkb_ev->any.xkb_type)
+             {
+-            case XkbNewKeyboardNotify:
+             case XkbMapNotify:
+               keymap_changed (backend);
+               break;

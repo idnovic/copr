@@ -1,0 +1,75 @@
+diff --git a/js/ui/layout.js b/js/ui/layout.js
+index 30e750dc5fa8f437b7c1bff21c893ea355e8f169..888cb45cdea6c9c677ac0bec98f1bf211f92c080 100644
+--- a/js/ui/layout.js
++++ b/js/ui/layout.js
+@@ -1058,8 +1058,7 @@ var LayoutManager = GObject.registerClass({
+             }
+         }
+ 
+-        if (!Meta.is_wayland_compositor())
+-            global.set_stage_input_region(rects);
++        global.set_stage_input_region(rects);
+         this._isPopupWindowVisible = isPopupMenuVisible;
+ 
+         let workspaceManager = global.workspace_manager;
+diff --git a/src/shell-app.c b/src/shell-app.c
+index 10efa9135f327cb76f17e2e831a2dcfe5ee80715..752316051ece7deb28caf9ae243f6b14ac868a97 100644
+--- a/src/shell-app.c
++++ b/src/shell-app.c
+@@ -1151,11 +1151,10 @@ _shell_app_handle_startup_sequence (ShellApp            *app,
+   if (starting && shell_app_get_state (app) == SHELL_APP_STATE_STOPPED)
+     {
+       MetaDisplay *display = shell_global_get_display (shell_global_get ());
+-      MetaX11Display *x11_display = meta_display_get_x11_display (display);
+ 
+       shell_app_state_transition (app, SHELL_APP_STATE_STARTING);
+-      meta_x11_display_focus_the_no_focus_window (x11_display,
+-                                                  meta_startup_sequence_get_timestamp (sequence));
++      meta_display_unset_input_focus (display,
++                                      meta_startup_sequence_get_timestamp (sequence));
+       app->started_on_workspace = meta_startup_sequence_get_workspace (sequence);
+     }
+ 
+diff --git a/src/shell-global.c b/src/shell-global.c
+index 4295162a86d631df27ce5ff80d74f8fcf292fa9e..e696a324c8d218b4931cdd9d986e32e8ac440854 100644
+--- a/src/shell-global.c
++++ b/src/shell-global.c
+@@ -61,8 +61,6 @@ struct _ShellGlobal {
+ 
+   MetaDisplay *meta_display;
+   MetaWorkspaceManager *workspace_manager;
+-  GdkDisplay *gdk_display;
+-  MetaX11Display *x11_display;
+   Display *xdisplay;
+ 
+   char *session_mode;
+@@ -642,6 +640,9 @@ shell_global_set_stage_input_region (ShellGlobal *global,
+ 
+   g_return_if_fail (SHELL_IS_GLOBAL (global));
+ 
++  if (meta_is_wayland_compositor ())
++    return;
++
+   nrects = g_slist_length (rectangles);
+   rects = g_new (XRectangle, nrects);
+   for (r = rectangles, i = 0; r; r = r->next, i++)
+@@ -846,10 +847,6 @@ _shell_global_set_plugin (ShellGlobal *global,
+   display = meta_plugin_get_display (plugin);
+   global->meta_display = display;
+   global->workspace_manager = meta_display_get_workspace_manager (display);
+-  global->x11_display = meta_display_get_x11_display (display);
+-  global->xdisplay = meta_x11_display_get_xdisplay (global->x11_display);
+-
+-  global->gdk_display = gdk_x11_lookup_xdisplay (global->xdisplay);
+ 
+   global->stage = CLUTTER_STAGE (meta_get_stage_for_display (display));
+ 
+@@ -859,6 +856,8 @@ _shell_global_set_plugin (ShellGlobal *global,
+     }
+   else
+     {
++      MetaX11Display *x11_display = meta_display_get_x11_display (display);
++      global->xdisplay = meta_x11_display_get_xdisplay (x11_display);
+       global->stage_xwindow = clutter_x11_get_stage_window (global->stage);
+     }
+ 
