@@ -94,7 +94,7 @@ Requires:      libinput%{?_isa} >= %{libinput_version}
 Patch2: mutter-281.diff
 #Patch3: mutter-363.diff
 #Patch4: mutter-189.diff
-Patch5: mutter-402.diff
+#Patch5: mutter-402.diff
 Patch6: mutter-283.diff
 Patch7: mutter-168.diff
 Patch8: mutter-568.diff
