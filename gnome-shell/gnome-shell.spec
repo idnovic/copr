@@ -132,7 +132,7 @@ Patch4: gnome-shell-136.diff
 Patch6: gnome-shell-521.diff
 #Patch7: gnome-shell-317.diff
 #Patch8: gnome-shell-320.diff
-Patch9: gnome-shell-378.diff
+#Patch9: gnome-shell-378.diff #does not build
 #Patch10: gnome-shell-420.diff
 ### end downstream changes
 
