@@ -128,7 +128,7 @@ Obsoletes:      python3-caribou < 0.4.21-10
 
 ### downstream changes for idnovic/gnome-fix
 Patch4: gnome-shell-136.diff
-Patch5: gnome-shell-276.diff
+#Patch5: gnome-shell-276.diff
 Patch6: gnome-shell-521.diff
 Patch7: gnome-shell-317.diff
 Patch8: gnome-shell-320.diff
