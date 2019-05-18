@@ -92,7 +92,7 @@ Requires:      libinput%{?_isa} >= %{libinput_version}
 
 ### downstream changes for idnovic/gnome-fix
 Patch2: mutter-281.diff
-Patch3: mutter-363.diff
+#Patch3: mutter-363.diff
 Patch4: mutter-189.diff
 Patch5: mutter-402.diff
 Patch6: mutter-283.diff
