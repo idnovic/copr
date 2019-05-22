@@ -7,7 +7,7 @@
 %global mutter_api_version 4
 
 Name:          mutter
-Version:       3.32.1
+Version:       3.32.2
 Release:       1%{?dist}
 Summary:       Window and compositing manager based on Clutter
 
