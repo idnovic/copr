@@ -104,7 +104,7 @@ Patch2: mutter-281.diff
 #clutter-actor: Add detail to captured-event signal [performance] 
 Patch6: mutter-283.diff
 #clutter: Deliver events sooner when possible 
-Patch7: mutter-168.diff
+###Patch7: mutter-168.diff
 #WIP: compositor: Don't emit size-changed when only position changes 
 Patch8: mutter-568.diff
 #wayland: Unset DnD selection on wl_data_offer destruction 
