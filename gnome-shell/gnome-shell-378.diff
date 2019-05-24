@@ -1,8 +1,8 @@
 diff --git a/js/ui/layout.js b/js/ui/layout.js
-index 30e750dc5fa8f437b7c1bff21c893ea355e8f169..888cb45cdea6c9c677ac0bec98f1bf211f92c080 100644
+index b98827a3ca823fbc37b694c6d4a66835ebedf00b..6f6677d642aa2e6062b63bf5860a4da2d252ef61 100644
 --- a/js/ui/layout.js
 +++ b/js/ui/layout.js
-@@ -1058,8 +1058,7 @@ var LayoutManager = GObject.registerClass({
+@@ -1072,8 +1072,7 @@ var LayoutManager = GObject.registerClass({
              }
          }
  
