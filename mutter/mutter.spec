@@ -91,16 +91,30 @@ Requires:      json-glib%{?_isa} >= %{json_glib_version}
 Requires:      libinput%{?_isa} >= %{libinput_version}
 
 ### downstream changes for idnovic/gnome-fix
+#clutter/stage-cogl: Don't skip over the next frame#merged
+Patch1: mutter-520.diff
+#clutter/stage-cogl: Reschedule update on present#merged
 Patch2: mutter-281.diff
+#Consolidate all frame throttling into clutter-stage-cogl
 #Patch3: mutter-363.diff
+#Geometric (OpenGL-less) picking
 #Patch4: mutter-189.diff
+#WIP: Cleanups to achieve to fully software-based picking 
 #Patch5: mutter-402.diff
+#clutter-actor: Add detail to captured-event signal [performance] 
 Patch6: mutter-283.diff
+#clutter: Deliver events sooner when possible 
 Patch7: mutter-168.diff
+#WIP: compositor: Don't emit size-changed when only position changes 
 Patch8: mutter-568.diff
-#Patch9: mutter-574.diff #does not build
+#wayland: Unset DnD selection on wl_data_offer destruction 
+#Patch9: mutter-574.diff
+#Honour `CLUTTER_ACTOR_NO_LAYOUT` more efficiently 
 Patch10: mutter-575.diff
+#backends: Do not reload keymap on new keyboard notifications#merged
 Patch11: mutter-579.diff
+#renderer-native: Reference count front buffers#merged
+Patch12: mutter-119.diff
 ### end downstream changes
 
 %description
