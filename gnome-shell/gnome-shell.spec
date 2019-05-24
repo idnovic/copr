@@ -135,7 +135,7 @@ Patch4: gnome-shell-136.diff
 #panel: Don't chain up to parent's allocate#merged
 #Patch6: gnome-shell-521.diff#errormerge
 #Clean up gtk/gdk api usage#merged
-Patch7: gnome-shell-317.diff
+#Patch7: gnome-shell-317.diff#errormerge
 #Preparations for optional X11#merged
 Patch8: gnome-shell-378.diff
 ### end downstream changes
