@@ -130,20 +130,14 @@ Obsoletes:      python3-caribou < 0.4.21-10
 ### downstream changes for idnovic/gnome-fix
 #Fix and polish the window overlays of the overview
 Patch4: gnome-shell-136.diff
-#clutter-actor: Add detail to captured-event signal [performance]
-#Patch5: gnome-shell-283.diff
 #WIP: js/ui: Use captured-event::nonmotion [performance]
-#Patch6: gnome-shell-276.diff
+#Patch5: gnome-shell-276.diff
 #panel: Don't chain up to parent's allocate#merged
-#Patch7: gnome-shell-521.diff
+#Patch6: gnome-shell-521.diff
 #Clean up gtk/gdk api usage#merged
-#Patch8: gnome-shell-317.diff
-#keyboard: Do not call KeyboardManager.holdKeyboard() with set-content-type#merged
-#Patch9: gnome-shell-320.diff
-#Preparation for x11 excision#merged
-#Patch10: gnome-shell-420.diff
+#Patch7: gnome-shell-317.diff
 #Preparations for optional X11#merged
-#Patch11: gnome-shell-378.diff
+#Patch8: gnome-shell-378.diff
 ### end downstream changes
 
 %description
