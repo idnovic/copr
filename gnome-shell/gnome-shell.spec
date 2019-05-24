@@ -133,7 +133,7 @@ Patch4: gnome-shell-136.diff
 #WIP: js/ui: Use captured-event::nonmotion [performance]
 #Patch5: gnome-shell-276.diff#errormerge
 #panel: Don't chain up to parent's allocate#merged
-Patch6: gnome-shell-521.diff
+#Patch6: gnome-shell-521.diff#errormerge
 #Clean up gtk/gdk api usage#merged
 Patch7: gnome-shell-317.diff
 #Preparations for optional X11#merged
