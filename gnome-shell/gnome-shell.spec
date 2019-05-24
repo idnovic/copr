@@ -137,7 +137,7 @@ Patch4: gnome-shell-136.diff
 #Clean up gtk/gdk api usage#merged
 #Patch7: gnome-shell-317.diff#errormerge
 #Preparations for optional X11#merged
-Patch8: gnome-shell-378.diff
+#Patch8: gnome-shell-378.diff#errorbuild
 ### end downstream changes
 
 %description
