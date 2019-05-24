@@ -131,13 +131,13 @@ Obsoletes:      python3-caribou < 0.4.21-10
 #Fix and polish the window overlays of the overview
 Patch4: gnome-shell-136.diff
 #WIP: js/ui: Use captured-event::nonmotion [performance]
-Patch5: gnome-shell-276.diff
+#Patch5: gnome-shell-276.diff#errormerge
 #panel: Don't chain up to parent's allocate#merged
-#Patch6: gnome-shell-521.diff
+Patch6: gnome-shell-521.diff
 #Clean up gtk/gdk api usage#merged
-#Patch7: gnome-shell-317.diff
+Patch7: gnome-shell-317.diff
 #Preparations for optional X11#merged
-#Patch8: gnome-shell-378.diff
+Patch8: gnome-shell-378.diff
 ### end downstream changes
 
 %description
