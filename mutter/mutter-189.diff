@@ -45,7 +45,7 @@ index c44f6342fdc277223183fb47cf7fb61a58020ca9..9bf1a3049318dc3f249874525143ae05
                                                                                           gboolean      repeat);
  void                            _clutter_actor_shader_post_paint                        (ClutterActor *actor);
 diff --git a/clutter/clutter/clutter-actor.c b/clutter/clutter/clutter-actor.c
-index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c612377e90 100644
+index 3c48e4e9aece0b253676f678c9acad388bea8f42..09be5c6cce46882d050d0587396a49f7ac426aac 100644
 --- a/clutter/clutter/clutter-actor.c
 +++ b/clutter/clutter/clutter-actor.c
 @@ -729,8 +729,6 @@ struct _ClutterActorPrivate
@@ -57,7 +57,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
    /* a back-pointer to the Pango context that we can use
     * to create pre-configured PangoLayout
     */
-@@ -1280,6 +1278,131 @@ clutter_actor_verify_map_state (ClutterActor *self)
+@@ -1283,6 +1281,131 @@ clutter_actor_verify_map_state (ClutterActor *self)
  
  #endif /* CLUTTER_ENABLE_DEBUG */
  
@@ -189,7 +189,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
  static void
  clutter_actor_set_mapped (ClutterActor *self,
                            gboolean      mapped)
-@@ -1508,8 +1631,7 @@ clutter_actor_update_map_state (ClutterActor  *self,
+@@ -1511,8 +1634,7 @@ clutter_actor_update_map_state (ClutterActor  *self,
  static void
  clutter_actor_real_map (ClutterActor *self)
  {
@@ -199,7 +199,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
  
    g_assert (!CLUTTER_ACTOR_IS_MAPPED (self));
  
-@@ -1520,13 +1642,6 @@ clutter_actor_real_map (ClutterActor *self)
+@@ -1523,13 +1645,6 @@ clutter_actor_real_map (ClutterActor *self)
  
    self->priv->needs_paint_volume_update = TRUE;
  
@@ -213,7 +213,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
    clutter_actor_ensure_resource_scale (self);
  
    /* notify on parent mapped before potentially mapping
-@@ -1631,11 +1746,6 @@ clutter_actor_real_unmap (ClutterActor *self)
+@@ -1634,11 +1749,6 @@ clutter_actor_real_unmap (ClutterActor *self)
  
        stage = CLUTTER_STAGE (_clutter_actor_get_stage_internal (self));
  
@@ -225,7 +225,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
        if (stage != NULL &&
            clutter_stage_get_key_focus (stage) == self)
          {
-@@ -2254,46 +2364,14 @@ static void
+@@ -2257,46 +2367,14 @@ static void
  clutter_actor_real_pick (ClutterActor       *self,
  			 const ClutterColor *color)
  {
@@ -277,7 +277,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
      }
  
    /* XXX - this thoroughly sucks, but we need to maintain compatibility
-@@ -3584,15 +3662,6 @@ _clutter_actor_update_last_paint_volume (ClutterActor *self)
+@@ -3587,15 +3665,6 @@ _clutter_actor_update_last_paint_volume (ClutterActor *self)
    priv->last_paint_volume_valid = TRUE;
  }
  
@@ -293,7 +293,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
  /* This is the same as clutter_actor_add_effect except that it doesn't
     queue a redraw and it doesn't notify on the effect property */
  static void
-@@ -3824,6 +3893,7 @@ clutter_actor_paint (ClutterActor *self)
+@@ -3827,6 +3896,7 @@ clutter_actor_paint (ClutterActor *self)
  {
    ClutterActorPrivate *priv;
    ClutterPickMode pick_mode;
@@ -301,7 +301,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
    gboolean clip_set = FALSE;
    ClutterStage *stage;
  
-@@ -3917,24 +3987,37 @@ clutter_actor_paint (ClutterActor *self)
+@@ -3920,24 +3990,37 @@ clutter_actor_paint (ClutterActor *self)
  
    if (priv->has_clip)
      {
@@ -351,8 +351,8 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
      }
  
    if (pick_mode == CLUTTER_PICK_NONE)
-@@ -4015,9 +4098,16 @@ done:
- 
+@@ -4018,9 +4101,16 @@ clutter_actor_paint (ClutterActor *self)
+ done:
    if (clip_set)
      {
 -      CoglFramebuffer *fb = _clutter_stage_get_active_framebuffer (stage);
@@ -370,7 +370,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
      }
  
    cogl_pop_matrix ();
-@@ -4088,11 +4178,12 @@ clutter_actor_continue_paint (ClutterActor *self)
+@@ -4091,11 +4181,12 @@ clutter_actor_continue_paint (ClutterActor *self)
          {
            ClutterColor col = { 0, };
  
@@ -388,7 +388,7 @@ index fd38338c7a7505c9e88afc88b52783b9e6690df2..a5d7cec43f2213f2728e9513965407c6
             *
             * XXX:2.0 - Call the pick() virtual directly
             */
-@@ -8598,8 +8689,6 @@ clutter_actor_init (ClutterActor *self)
+@@ -8614,8 +8705,6 @@ clutter_actor_init (ClutterActor *self)
  
    self->priv = priv = clutter_actor_get_instance_private (self);
  
@@ -427,7 +427,7 @@ index 2462385f65c4b769c65923ce0ebc33d863d110db..3744c648fb63a586598049acf394c9f6
  
  typedef enum
 diff --git a/clutter/clutter/clutter-main.c b/clutter/clutter/clutter-main.c
-index 71ec0d80c2867586b8a6e5dab74aedd4d983630b..c2ec82697fc30bff42fb360f1fd96795d19fd1a9 100644
+index fbae4d99593e8d34815782222951eab8288b60c0..e70d630cde7f90306f88723929a5c65d046322cd 100644
 --- a/clutter/clutter/clutter-main.c
 +++ b/clutter/clutter/clutter-main.c
 @@ -130,7 +130,6 @@ static const GDebugKey clutter_debug_keys[] = {
@@ -565,7 +565,7 @@ index 71ec0d80c2867586b8a6e5dab74aedd4d983630b..c2ec82697fc30bff42fb360f1fd96795
  clutter_context_get_pango_fontmap (void)
  {
 diff --git a/clutter/clutter/clutter-private.h b/clutter/clutter/clutter-private.h
-index a5cd1fa1976ef6121594d72cc1550fb53b22d6e8..47bef4ac29ffdf72179793221928ada81d23d1ca 100644
+index d4706808e71e184e4031ad6dfb026295d29a5457..6c7aba998bd93cc61e6d3cf8843b4391ab7f1e38 100644
 --- a/clutter/clutter/clutter-private.h
 +++ b/clutter/clutter/clutter-private.h
 @@ -210,11 +210,6 @@ gboolean      _clutter_feature_init (GError **error);
@@ -670,7 +670,7 @@ index 6c3601745f19c726fbc1d3f2b112e97156061f62..aa0c5f71ccbb23b565678bb73e2c49b6
  
  GList *           _clutter_stage_window_get_views               (ClutterStageWindow *window);
 diff --git a/clutter/clutter/clutter-stage.c b/clutter/clutter/clutter-stage.c
-index 1eea5b305a16933c2349ccf549fea046751c0a68..089332c09eb4ddbdc6c095904115cb19e7c159bf 100644
+index 9e267e9c9dd3ecde26c58b0f5d3a92f79c128b29..0dca908df0d5922224e273d22800a85d57baa806 100644
 --- a/clutter/clutter/clutter-stage.c
 +++ b/clutter/clutter/clutter-stage.c
 @@ -103,6 +103,14 @@ struct _ClutterStageQueueRedrawEntry
@@ -849,7 +849,7 @@ index 1eea5b305a16933c2349ccf549fea046751c0a68..089332c09eb4ddbdc6c095904115cb19
    _clutter_stage_window_get_geometry (priv->impl, &geom);
  
    viewport[0] = priv->viewport[0];
-@@ -1397,40 +1543,6 @@ clutter_stage_get_redraw_clip_bounds (ClutterStage          *stage,
+@@ -1393,40 +1539,6 @@ clutter_stage_get_redraw_clip_bounds (ClutterStage          *stage,
      }
  }
  
@@ -890,7 +890,7 @@ index 1eea5b305a16933c2349ccf549fea046751c0a68..089332c09eb4ddbdc6c095904115cb19
  static ClutterActor *
  _clutter_stage_do_pick_on_view (ClutterStage     *stage,
                                  gint              x,
-@@ -1438,140 +1550,47 @@ _clutter_stage_do_pick_on_view (ClutterStage     *stage,
+@@ -1434,140 +1546,47 @@ _clutter_stage_do_pick_on_view (ClutterStage     *stage,
                                  ClutterPickMode   mode,
                                  ClutterStageView *view)
  {
@@ -1060,7 +1060,7 @@ index 1eea5b305a16933c2349ccf549fea046751c0a68..089332c09eb4ddbdc6c095904115cb19
  }
  
  static ClutterStageView *
-@@ -1884,7 +1903,9 @@ clutter_stage_finalize (GObject *object)
+@@ -1880,7 +1899,9 @@ clutter_stage_finalize (GObject *object)
  
    g_array_free (priv->paint_volume_stack, TRUE);
  
@@ -1071,7 +1071,7 @@ index 1eea5b305a16933c2349ccf549fea046751c0a68..089332c09eb4ddbdc6c095904115cb19
  
    if (priv->fps_timer != NULL)
      g_timer_destroy (priv->fps_timer);
-@@ -2384,7 +2405,9 @@ clutter_stage_init (ClutterStage *self)
+@@ -2380,7 +2401,9 @@ clutter_stage_init (ClutterStage *self)
    priv->paint_volume_stack =
      g_array_new (FALSE, FALSE, sizeof (ClutterPaintVolume));
  
@@ -1082,7 +1082,7 @@ index 1eea5b305a16933c2349ccf549fea046751c0a68..089332c09eb4ddbdc6c095904115cb19
  }
  
  /**
-@@ -4208,6 +4231,12 @@ _clutter_stage_queue_actor_redraw (ClutterStage                 *stage,
+@@ -4204,6 +4227,12 @@ _clutter_stage_queue_actor_redraw (ClutterStage                 *stage,
    CLUTTER_NOTE (CLIPPING, "stage_queue_actor_redraw (actor=%s, clip=%p): ",
                  _clutter_actor_get_debug_name (actor), clip);
  
@@ -1095,7 +1095,7 @@ index 1eea5b305a16933c2349ccf549fea046751c0a68..089332c09eb4ddbdc6c095904115cb19
    if (!priv->redraw_pending)
      {
        ClutterMasterClock *master_clock;
-@@ -4468,39 +4497,6 @@ _clutter_stage_get_active_framebuffer (ClutterStage *stage)
+@@ -4464,39 +4493,6 @@ _clutter_stage_get_active_framebuffer (ClutterStage *stage)
    return stage->priv->active_framebuffer;
  }
  
@@ -1153,10 +1153,10 @@ index 0f0fb1c2aca26581a5dc5f0e4ab3ed88d847c121..2bbf7deda5705a203cb96506ef64d590
  void             clutter_actor_box_from_vertices (ClutterActorBox       *box,
                                                    const ClutterVertex    verts[]);
 diff --git a/clutter/clutter/cogl/clutter-stage-cogl.c b/clutter/clutter/cogl/clutter-stage-cogl.c
-index e0c39185b3093af2aac38485f09429a49b7a5ed9..137c66598935d8187fe096c1a5d9aff877d6393c 100644
+index 1ed7e01c46fff0541a95e3460ce5fb11e7e4b9b3..37bbb3ee1c417d21970233c81c34e07182b3465f 100644
 --- a/clutter/clutter/cogl/clutter-stage-cogl.c
 +++ b/clutter/clutter/cogl/clutter-stage-cogl.c
-@@ -956,55 +956,6 @@ clutter_stage_cogl_redraw (ClutterStageWindow *stage_window)
+@@ -967,55 +967,6 @@ clutter_stage_cogl_redraw (ClutterStageWindow *stage_window)
    stage_cogl->frame_count++;
  }
  
@@ -1212,7 +1212,7 @@ index e0c39185b3093af2aac38485f09429a49b7a5ed9..137c66598935d8187fe096c1a5d9aff8
  static void
  clutter_stage_window_iface_init (ClutterStageWindowInterface *iface)
  {
-@@ -1022,7 +973,6 @@ clutter_stage_window_iface_init (ClutterStageWindowInterface *iface)
+@@ -1033,7 +984,6 @@ clutter_stage_window_iface_init (ClutterStageWindowInterface *iface)
    iface->ignoring_redraw_clips = clutter_stage_cogl_ignoring_redraw_clips;
    iface->get_redraw_clip_bounds = clutter_stage_cogl_get_redraw_clip_bounds;
    iface->redraw = clutter_stage_cogl_redraw;
@@ -1221,7 +1221,7 @@ index e0c39185b3093af2aac38485f09429a49b7a5ed9..137c66598935d8187fe096c1a5d9aff8
  
  static void
 diff --git a/clutter/clutter/deprecated/clutter-texture.c b/clutter/clutter/deprecated/clutter-texture.c
-index bea239f454bb83d12907e96143c2e3c2221479ea..2c677b8a4426a399a5c1704605fe06ccfd01c1ce 100644
+index 7eae4ee462a8318e532e607017db4bd8693ee845..62e65445873c279008421eba1dcb8854347b4d6e 100644
 --- a/clutter/clutter/deprecated/clutter-texture.c
 +++ b/clutter/clutter/deprecated/clutter-texture.c
 @@ -572,83 +572,6 @@ gen_texcoords_and_draw_cogl_rectangle (ClutterActor    *self,
@@ -1341,7 +1341,7 @@ index bea239f454bb83d12907e96143c2e3c2221479ea..2c677b8a4426a399a5c1704605fe06cc
  
    if (G_UNLIKELY (texture_template_pipeline == NULL))
      {
-@@ -3052,13 +2966,8 @@ clutter_texture_set_pick_with_alpha (ClutterTexture *texture,
+@@ -3050,13 +2964,8 @@ clutter_texture_set_pick_with_alpha (ClutterTexture *texture,
    if (priv->pick_with_alpha == pick_with_alpha)
      return;
  
@@ -1496,10 +1496,10 @@ index 969b4920ac0193013541b49bf4199d186adb33e1..2bf5954c7379386d67468a5e6360a737
                  clutter_stage_get_actor_at_pos (CLUTTER_STAGE (state->stage),
                                                  CLUTTER_PICK_ALL,
 diff --git a/clutter/tests/conform/meson.build b/clutter/tests/conform/meson.build
-index a9f2d7e20c89e797ad5e3b88660bc9b803700ae3..fffc9014c47d0e8d082159daea9595c864aaafe7 100644
+index 5d0df7acde7e904593415196646eb3e3598f8308..87eafd7db783834712ce93e8d41082b88d9082d9 100644
 --- a/clutter/tests/conform/meson.build
 +++ b/clutter/tests/conform/meson.build
-@@ -42,7 +42,6 @@ clutter_conform_tests_deprecated_tests = [
+@@ -39,7 +39,6 @@ clutter_conform_tests_deprecated_tests = [
    'behaviours',
    'group',
    'rectangle',

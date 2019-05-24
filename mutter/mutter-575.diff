@@ -45,7 +45,7 @@ index 4799c29e135944770574947f9283ce0b001babc0..365e9cbce4e67b60c2d9944ab8003192
  
  #endif /* __CLUTTER_STAGE_PRIVATE_H__ */
 diff --git a/clutter/clutter/clutter-stage.c b/clutter/clutter/clutter-stage.c
-index 9e267e9c9dd3ecde26c58b0f5d3a92f79c128b29..16f62aad260bac471a7e099991d92907e0184bdc 100644
+index 9e267e9c9dd3ecde26c58b0f5d3a92f79c128b29..8d9115c192dab08edb3ed6619311a442de12637c 100644
 --- a/clutter/clutter/clutter-stage.c
 +++ b/clutter/clutter/clutter-stage.c
 @@ -127,6 +127,7 @@ struct _ClutterStagePrivate
@@ -80,7 +80,7 @@ index 9e267e9c9dd3ecde26c58b0f5d3a92f79c128b29..16f62aad260bac471a7e099991d92907
 +
 +  if (priv->pending_queue_relayouts)
 +    {
-+      ClutterActor *first = (ClutterActor *)priv->pending_queue_relayouts->data;
++      ClutterActor *first = priv->pending_queue_relayouts->data;
 +
 +      if (first == (ClutterActor *) stage)
 +        {

@@ -1,5 +1,5 @@
 diff --git a/clutter/clutter/cogl/clutter-stage-cogl.c b/clutter/clutter/cogl/clutter-stage-cogl.c
-index 1ed7e01c46fff0541a95e3460ce5fb11e7e4b9b3..59ed92ae828da6892533d7a59e1d5016fc84bf79 100644
+index 80ed474a9db72fa324004dc0b946a2a004901705..973272f9c6797a7a73cde19b335d72f7b4229db1 100644
 --- a/clutter/clutter/cogl/clutter-stage-cogl.c
 +++ b/clutter/clutter/cogl/clutter-stage-cogl.c
 @@ -77,6 +77,10 @@ enum
