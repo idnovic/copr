@@ -58,6 +58,7 @@ index 8c4cb36d873f5ddd8f01c7a38a9f6a504536810f..199df7de89f1b3fb71864ba907889266
      constructor(actor) {
          this._dx = 0;
          this._dy = 0;
+         this._enabled = true;
 -        actor.connect('captured-event', this._handleEvent.bind(this));
 +        actor.connect('captured-event::nonmotion', this._handleEvent.bind(this));
  	this._touchpadSettings = new Gio.Settings({schema_id: 'org.gnome.desktop.peripherals.touchpad'});
