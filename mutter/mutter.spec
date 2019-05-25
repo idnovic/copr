@@ -101,13 +101,12 @@ Patch2: mutter-281.diff
 #Patch4: mutter-189.diff#errorbuggy fullscreen
 #WIP: Cleanups to achieve to fully software-based picking 
 #Patch5: mutter-402.diff#errormerge
-#errormerge
 #clutter-actor: Add detail to captured-event signal [performance] 
 Patch6: mutter-283.diff
 #clutter: Deliver events sooner when possible 
 #Patch7: mutter-168.diff#errorbuggy
 #WIP: compositor: Don't emit size-changed when only position changes 
-Patch8: mutter-568.diff
+#Patch8: mutter-568.diff#errorbuggy
 #wayland: Unset DnD selection on wl_data_offer destruction 
 #Patch9: mutter-574.diff#errorbuild
 #Honour `CLUTTER_ACTOR_NO_LAYOUT` more efficiently 
