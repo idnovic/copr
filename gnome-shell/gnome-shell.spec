@@ -148,6 +148,8 @@ Patch9: gnome-shell-505.diff
 Patch11: gnome-shell-267.diff
 #Fixes and performance improvements to the extension system
 Patch12: gnome-shell-96.diff
+#asynchronous roundtrip cycle
+Patch13: gnome-shell-007.diff
 ### end downstream changes
 
 %description
