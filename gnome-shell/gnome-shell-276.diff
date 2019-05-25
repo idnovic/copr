@@ -50,17 +50,4 @@ index b902eb36467c6e11d63d27c207c8d6309d3d1f3a..70bce0edc732ed620d7c25681ecfa6b3
      }
  
      _handleEvent(actor, event) {
-diff --git a/js/ui/windowManager.js b/js/ui/windowManager.js
-index 8c4cb36d873f5ddd8f01c7a38a9f6a504536810f..199df7de89f1b3fb71864ba907889266a330d914 100644
---- a/js/ui/windowManager.js
-+++ b/js/ui/windowManager.js
-@@ -465,7 +465,7 @@ var TouchpadWorkspaceSwitchAction = class {
-     constructor(actor) {
-         this._dx = 0;
-         this._dy = 0;
-         this._enabled = true;
--        actor.connect('captured-event', this._handleEvent.bind(this));
-+        actor.connect('captured-event::nonmotion', this._handleEvent.bind(this));
- 	this._touchpadSettings = new Gio.Settings({schema_id: 'org.gnome.desktop.peripherals.touchpad'});
-     }
  
