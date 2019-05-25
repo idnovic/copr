@@ -100,7 +100,7 @@ Patch2: mutter-281.diff
 #Geometric (OpenGL-less) picking
 Patch4: mutter-189.diff
 #WIP: Cleanups to achieve to fully software-based picking 
-Patch5: mutter-402.diff
+#Patch5: mutter-402.diff#errormerge
 #clutter-actor: Add detail to captured-event signal [performance] 
 Patch6: mutter-283.diff
 #clutter: Deliver events sooner when possible 
@@ -108,7 +108,7 @@ Patch6: mutter-283.diff
 #WIP: compositor: Don't emit size-changed when only position changes 
 Patch8: mutter-568.diff
 #wayland: Unset DnD selection on wl_data_offer destruction 
-#Patch9: mutter-574.diff
+Patch9: mutter-574.diff
 #Honour `CLUTTER_ACTOR_NO_LAYOUT` more efficiently 
 Patch10: mutter-575.diff
 #backends: Do not reload keymap on new keyboard notifications#merged
