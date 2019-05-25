@@ -132,13 +132,12 @@ Obsoletes:      python3-caribou < 0.4.21-10
 Patch4: gnome-shell-136.diff
 #WIP: js/ui: Use captured-event::nonmotion [performance]
 Patch5: gnome-shell-276.diff
-#errormerge
 #panel: Don't chain up to parent's allocate#merged
 #Patch6: gnome-shell-521.diff#errormerge
 #Clean up gtk/gdk api usage#merged
 #Patch7: gnome-shell-317.diff#errormerge
-#Preparations for optional X11#merged
-#Patch8: gnome-shell-378.diff#errorbuild
+#windowManager: ensure actor resize clone dies with actor#merged
+Patch8: gnome-shell-395.diff
 #st: Only emit ::style-changed on actual changes#merged
 Patch9: gnome-shell-505.diff
 #st: Delay handling of :first/:last-child changes#merged
