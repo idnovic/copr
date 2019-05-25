@@ -1,0 +1,59 @@
+diff --git a/src/st/st-icon.c b/src/st/st-icon.c
+index 04d2d1d3cc1208028c14ea7c8513482272bf4f46..8b7015281decd3b72865303851bbbbd343226d48 100644
+--- a/src/st/st-icon.c
++++ b/src/st/st-icon.c
+@@ -206,8 +206,8 @@ st_icon_style_changed (StWidget *widget)
+     }
+ 
+   priv->theme_icon_size = (int)(0.5 + st_theme_node_get_length (theme_node, "icon-size"));
+-  st_icon_update_icon_size (self);
+-  st_icon_update (self);
++  if (st_icon_update_icon_size (self))
++    st_icon_update (self);
+ }
+ 
+ static void
+diff --git a/src/st/st-theme-node-private.h b/src/st/st-theme-node-private.h
+index 2e6b232f6fc5355220000da3127ae969cca6c2b6..47be65dba83aa3d435895c0aaf682e8ac96e191f 100644
+--- a/src/st/st-theme-node-private.h
++++ b/src/st/st-theme-node-private.h
+@@ -107,6 +107,8 @@ struct _StThemeNode {
+   int box_shadow_min_width;
+   int box_shadow_min_height;
+ 
++  guint stylesheets_changed_id;
++
+   CoglPipeline *border_slices_texture;
+   CoglPipeline *border_slices_pipeline;
+   CoglPipeline *background_texture;
+diff --git a/src/st/st-theme-node.c b/src/st/st-theme-node.c
+index 8a6ebf03f81e9401d90242a1c8c87df99b54b657..8e910f831173791e3ea3c49b5b947696cd88318b 100644
+--- a/src/st/st-theme-node.c
++++ b/src/st/st-theme-node.c
+@@ -111,9 +111,11 @@ st_theme_node_dispose (GObject *gobject)
+       node->icon_colors = NULL;
+     }
+ 
+-  if (node->theme)
+-    g_signal_handlers_disconnect_by_func (node->theme,
+-                                          on_custom_stylesheets_changed, node);
++  if (node->theme && node->stylesheets_changed_id)
++    {
++      g_signal_handler_disconnect (node->theme, node->stylesheets_changed_id);
++      node->stylesheets_changed_id = 0;
++    }
+ 
+   st_theme_node_paint_state_free (&node->cached_state);
+ 
+@@ -230,8 +232,9 @@ st_theme_node_new (StThemeContext    *context,
+   if (theme != NULL)
+     {
+       node->theme = g_object_ref (theme);
+-      g_signal_connect (node->theme, "custom-stylesheets-changed",
+-                        G_CALLBACK (on_custom_stylesheets_changed), node);
++      node->stylesheets_changed_id =
++        g_signal_connect (node->theme, "custom-stylesheets-changed",
++                          G_CALLBACK (on_custom_stylesheets_changed), node);
+     }
+ 
+   node->element_type = element_type;
