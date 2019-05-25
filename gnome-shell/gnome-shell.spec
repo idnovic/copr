@@ -142,7 +142,7 @@ Patch5: gnome-shell-276.diff
 #st: Only emit ::style-changed on actual changes#merged
 Patch9: gnome-shell-505.diff
 #st: Delay handling of :first/:last-child changes#merged
-Patch10: gnome-shell-529.diff
+#Patch10: gnome-shell-529.diff#errormerge
 #Sort windows in the overview grid to minimize travel distance
 Patch11: gnome-shell-267.diff
 #Fixes and performance improvements to the extension system
