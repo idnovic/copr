@@ -108,7 +108,7 @@ Patch6: mutter-283.diff
 #WIP: compositor: Don't emit size-changed when only position changes 
 Patch8: mutter-568.diff
 #wayland: Unset DnD selection on wl_data_offer destruction 
-Patch9: mutter-574.diff
+#Patch9: mutter-574.diff#errorbuild
 #Honour `CLUTTER_ACTOR_NO_LAYOUT` more efficiently 
 Patch10: mutter-575.diff
 #backends: Do not reload keymap on new keyboard notifications#merged
