@@ -100,7 +100,7 @@ Patch2: mutter-281.diff
 #Geometric (OpenGL-less) picking
 #Patch4: mutter-189.diff#errorbuggy fullscreen
 #WIP: Cleanups to achieve to fully software-based picking 
-Patch5: mutter-402.diff
+#Patch5: mutter-402.diff#errormerge
 #errormerge
 #clutter-actor: Add detail to captured-event signal [performance] 
 Patch6: mutter-283.diff
