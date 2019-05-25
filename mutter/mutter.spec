@@ -115,6 +115,8 @@ Patch10: mutter-575.diff
 Patch11: mutter-579.diff
 #renderer-native: Reference count front buffers#merged
 Patch12: mutter-119.diff
+#window: free close dialog before unmanaging window from compositor#merged
+Patch13: mutter-556.diff
 ### end downstream changes
 
 %description
