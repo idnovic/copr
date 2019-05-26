@@ -160,6 +160,8 @@ Patch16: gnome-shell-535.diff
 Patch17: gnome-shell-536.diff
 #texture-cache: Keep aspect ratio for content images#merged
 Patch18: gnome-shell-525.diff
+#keyboard: Disable emoji support on X11#merged
+Patch19: gnome-shell-514.diff
 ### end downstream changes
 
 %description
