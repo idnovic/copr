@@ -1,0 +1,55 @@
+diff --git a/js/misc/introspect.js b/js/misc/introspect.js
+index f7a7f2fe6d799c26b6ad9bfe4bbc5e26c809743f..1df124bdb56a6d6c1d1a8c95b8b422f0f13dade4 100644
+--- a/js/misc/introspect.js
++++ b/js/misc/introspect.js
+@@ -42,8 +42,6 @@ var IntrospectService = class {
+     }
+ 
+     _isStandaloneApp(app) {
+-        let windows = app.get_windows();
+-
+         return app.get_windows().some(w => w.transient_for == null);
+     }
+ 
+@@ -55,6 +53,11 @@ var IntrospectService = class {
+        return APP_WHITELIST.includes(sender);
+     }
+ 
++    _getSandboxedAppId(app) {
++        let ids = app.get_windows().map(w => w.get_sandboxed_app_id());
++        return ids.find(id => id != null);
++    }
++
+     _syncRunningApplications() {
+         let tracker = Shell.WindowTracker.get_default();
+         let apps = this._appSystem.get_running();
+@@ -76,6 +79,10 @@ var IntrospectService = class {
+                 newActiveApplication = app.get_id();
+             }
+ 
++            let sandboxedAppId = this._getSandboxedAppId(app);
++            if (sandboxedAppId)
++                appInfo['sandboxed-app-id'] = new GLib.Variant('s', sandboxedAppId);
++
+             newRunningApplications[app.get_id()] = appInfo;
+         }
+ 
+@@ -137,6 +144,7 @@ var IntrospectService = class {
+                 let frameRect = window.get_frame_rect();
+                 let title = window.get_title();
+                 let wmClass = window.get_wm_class();
++                let sandboxedAppId = window.get_sandboxed_app_id();
+ 
+                 windowsList[windowId] = {
+                     'app-id': GLib.Variant.new('s', app.get_id()),
+@@ -153,6 +161,10 @@ var IntrospectService = class {
+ 
+                 if (wmClass != null)
+                     windowsList[windowId]['wm-class'] = GLib.Variant.new('s', wmClass);
++
++                if (sandboxedAppId != null)
++                    windowsList[windowId]['sandboxed-app-id'] =
++                        GLib.Variant.new('s', sandboxedAppId);
+             }
+         }
+         invocation.return_value(new GLib.Variant('(a{ta{sv}})', [windowsList]));
