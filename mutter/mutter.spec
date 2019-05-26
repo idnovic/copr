@@ -91,6 +91,9 @@ Requires:      json-glib%{?_isa} >= %{json_glib_version}
 Requires:      libinput%{?_isa} >= %{libinput_version}
 
 ### downstream changes for idnovic/gnome-fix
+BuildRequires: libcap-ng-devel
+Requires: libcap-ng
+
 #clutter/stage-cogl: Don't skip over the next frame#merged
 Patch1: mutter-520.diff
 #clutter/stage-cogl: Reschedule update on present#merged
@@ -125,6 +128,9 @@ Patch15: mutter-592.diff
 Patch16: mutter-494.diff
 #windowManager-Ensure-window-coords-match-frame-rect
 #Patch17: mutter-007.patch#errormerge
+#egl and realtime
+Patch18: mutter-454.diff
+Patch19: mutter-460.diff
 ### end downstream changes
 
 %description
