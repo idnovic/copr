@@ -1,0 +1,31 @@
+From 7b836bf13e75db104dc51dddbe88d35430ea4de6 Mon Sep 17 00:00:00 2001
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Wed, 17 Apr 2019 23:53:29 +0200
+Subject: [PATCH] windowManager: Ensure window coords match frame rect after
+ unminimize
+
+If the window changes state during the unminimize animation (eg. because it
+actually has to restore to fullscreen state), the destination coordinates
+of the actor may change before the done callback. Just sync directly in that
+case.
+---
+ js/ui/windowManager.js | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/js/ui/windowManager.js b/js/ui/windowManager.js
+index b9f5fef46..265c00fc0 100644
+--- a/js/ui/windowManager.js
++++ b/js/ui/windowManager.js
+@@ -1446,6 +1446,9 @@ var WindowManager = class {
+     }
+ 
+     _unminimizeWindowDone(shellwm, actor) {
++        let rect = actor.meta_window.get_frame_rect();
++        actor.set_position(rect.x, rect.y);
++
+         if (this._removeEffect(this._unminimizing, actor)) {
+             Tweener.removeTweens(actor);
+             actor.set_scale(1.0, 1.0);
+-- 
+2.21.0
+

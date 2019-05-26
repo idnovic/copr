@@ -1,0 +1,24 @@
+diff --git a/src/wayland/meta-wayland-pointer-constraints.c b/src/wayland/meta-wayland-pointer-constraints.c
+index a33b672f19b667a262ef8b57f04fb4c7650c77b3..aa59dbcb4f23be073cb25511624addb6573837b0 100644
+--- a/src/wayland/meta-wayland-pointer-constraints.c
++++ b/src/wayland/meta-wayland-pointer-constraints.c
+@@ -862,6 +862,19 @@ init_pointer_constraint (struct wl_resource                      *resource,
+       return;
+     }
+ 
++  switch (lifetime)
++    {
++    case ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT:
++    case ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT:
++      break;
++
++    default:
++      wl_resource_post_error (resource,
++                              WL_DISPLAY_ERROR_INVALID_OBJECT,
++                              "Invalid constraint lifetime");
++      return;
++    }
++
+   constraint = meta_wayland_pointer_constraint_new (surface, seat,
+                                                     region,
+                                                     lifetime,

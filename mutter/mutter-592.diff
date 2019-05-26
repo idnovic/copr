@@ -1,0 +1,20 @@
+diff --git a/src/core/window.c b/src/core/window.c
+index ff564250e5ec603a47f5482ca98b27fa082df370..89408081da0614a502f594bd514631279591a6ce 100644
+--- a/src/core/window.c
++++ b/src/core/window.c
+@@ -3812,13 +3812,13 @@ maybe_move_attached_window (MetaWindow *window,
+                             void       *data)
+ {
+   if (window->hidden)
+-    return FALSE;
++    return G_SOURCE_CONTINUE;
+ 
+   if (meta_window_is_attached_dialog (window) ||
+       meta_window_get_placement_rule (window))
+     meta_window_reposition (window);
+ 
+-  return FALSE;
++  return G_SOURCE_CONTINUE;
+ }
+ 
+ /**
