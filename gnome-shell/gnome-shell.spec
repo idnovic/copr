@@ -1,6 +1,6 @@
 Name:           gnome-shell
 Version:        3.32.2
-Release:        3.1%{?dist}.idnovic
+Release:        3.2%{?dist}.idnovic
 Summary:        Window management and application launching for GNOME
 
 	
@@ -145,11 +145,21 @@ Patch9: gnome-shell-505.diff
 #st: Delay handling of :first/:last-child changes#merged
 #Patch10: gnome-shell-529.diff#errormerge
 #Sort windows in the overview grid to minimize travel distance
-Patch11: gnome-shell-267.diff
+#Patch11: gnome-shell-267.diff#errorbuggy
 #Fixes and performance improvements to the extension system
 Patch12: gnome-shell-96.diff
 #asynchronous roundtrip cycle
 Patch13: gnome-shell-007.diff
+#Fix fallout from popup-menu this.actor removal#merged
+Patch14: gnome-shell-551.diff
+#introspect: Include `sandboxed-app-id` as well#merged
+Patch15: gnome-shell-545.diff
+#Unref theme nodes on unmapped widgets
+Patch16: gnome-shell-535.diff
+#St theme: use css instance data
+Patch17: gnome-shell-536.diff
+#texture-cache: Keep aspect ratio for content images#merged
+Patch18: gnome-shell-525.diff
 ### end downstream changes
 
 %description
