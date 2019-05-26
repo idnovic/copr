@@ -8,7 +8,7 @@
 
 Name:          mutter
 Version:       3.32.2
-Release:       4%{?dist}-idnovic
+Release:       1.1%{?dist}.idnovic
 Summary:       Window and compositing manager based on Clutter
 
 License:       GPLv2+
