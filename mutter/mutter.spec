@@ -7,8 +7,8 @@
 %global mutter_api_version 4
 
 Name:          mutter
-Version:       3.32.3
-Release:       3%{?dist}
+Version:       3.32.2
+Release:       4%{?dist}-idnovic
 Summary:       Window and compositing manager based on Clutter
 
 License:       GPLv2+
