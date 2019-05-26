@@ -8,7 +8,7 @@
 
 Name:          mutter
 Version:       3.32.2
-Release:       3.1%{?dist}.idnovic
+Release:       3.2%{?dist}.idnovic
 Summary:       Window and compositing manager based on Clutter
 
 License:       GPLv2+
@@ -102,7 +102,7 @@ Patch2: mutter-281.diff
 #WIP: Cleanups to achieve to fully software-based picking 
 #Patch5: mutter-402.diff#errormerge
 #clutter-actor: Add detail to captured-event signal [performance] 
-Patch6: mutter-283.diff
+#Patch6: mutter-283.diff#waitforupstream
 #clutter: Deliver events sooner when possible 
 #Patch7: mutter-168.diff#errorbuggy
 #WIP: compositor: Don't emit size-changed when only position changes 
@@ -115,8 +115,16 @@ Patch10: mutter-575.diff
 Patch11: mutter-579.diff
 #renderer-native: Reference count front buffers#merged
 Patch12: mutter-119.diff
+#Refactor DRM buffer management object#merged
+Patch13: mutter-584.diff
 #window: free close dialog before unmanaging window from compositor#merged
-Patch13: mutter-556.diff
+Patch14: mutter-556.diff
+#window: Move all attached windows with parent#merged
+Patch15: mutter-592.diff
+#wayland/pointer-constraints: Reject invalid lifetime#merged
+Patch16: mutter-494.diff
+#windowManager-Ensure-window-coords-match-frame-rect
+Patch17: mutter-007.patch
 ### end downstream changes
 
 %description
