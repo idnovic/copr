@@ -1,1 +1,1 @@
-# gnome-fix
+# copr build files
