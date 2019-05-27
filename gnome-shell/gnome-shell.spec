@@ -162,8 +162,6 @@ Patch17: gnome-shell-536.diff
 Patch18: gnome-shell-525.diff
 #keyboard: Disable emoji support on X11#merged
 Patch19: gnome-shell-514.diff
-#dash: Fix messed up icon height
-Patch20: gnome-shell-494.diff
 
 %post
 setcap CAP_SYS_NICE=+ep %{_bindir}/gnome-shell
