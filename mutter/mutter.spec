@@ -8,7 +8,7 @@
 
 Name:          mutter
 Version:       3.32.2
-Release:       3.9%{?dist}.idnovic
+Release:       4.0%{?dist}.idnovic
 Summary:       Window and compositing manager based on Clutter
 
 License:       GPLv2+
@@ -91,8 +91,8 @@ Requires:      json-glib%{?_isa} >= %{json_glib_version}
 Requires:      libinput%{?_isa} >= %{libinput_version}
 
 ### downstream changes for idnovic/gnome-fix
-#BuildRequires: libcap-ng-devel
-#Requires: libcap-ng
+BuildRequires: libcap-ng-devel
+Requires: libcap-ng
 
 #clutter/stage-cogl: Don't skip over the next frame#merged
 Patch1: mutter-520.diff
@@ -105,7 +105,7 @@ Patch2: mutter-281.diff
 #WIP: Cleanups to achieve to fully software-based picking 
 #Patch5: mutter-402.diff#errormerge
 #clutter-actor: Add detail to captured-event signal [performance] 
-Patch6: mutter-283.diff
+#Patch6: mutter-283.diff#regression
 #clutter: Deliver events sooner when possible 
 #Patch7: mutter-168.diff#errorbuggy
 #WIP: compositor: Don't emit size-changed when only position changes 
@@ -129,8 +129,8 @@ Patch16: mutter-494.diff
 #windowManager-Ensure-window-coords-match-frame-rect
 #Patch17: mutter-007.patch#errormerge
 #egl and realtime
-#Patch18: mutter-454.diff
-#Patch19: mutter-460.diff
+Patch18: mutter-454.diff
+Patch19: mutter-460.diff
 ### end downstream changes
 
 %description
