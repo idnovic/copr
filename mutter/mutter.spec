@@ -8,7 +8,7 @@
 
 Name:          mutter
 Version:       3.32.2
-Release:       3.7%{?dist}.idnovic
+Release:       3.8%{?dist}.idnovic
 Summary:       Window and compositing manager based on Clutter
 
 License:       GPLv2+
@@ -122,13 +122,13 @@ Patch11: mutter-579.diff
 #Refactor DRM buffer management object#merged
 #Patch13: mutter-584.diff
 #window: free close dialog before unmanaging window from compositor#merged
-#Patch14: mutter-556.diff
+Patch14: mutter-556.diff
 #window: Move all attached windows with parent#merged
-#Patch15: mutter-592.diff
+Patch15: mutter-592.diff
 #wayland/pointer-constraints: Reject invalid lifetime#merged
-#Patch16: mutter-494.diff
+Patch16: mutter-494.diff
 #windowManager-Ensure-window-coords-match-frame-rect
-#Patch17: mutter-007.patch#errormerge
+Patch17: mutter-007.patch#errormerge
 #egl and realtime
 #Patch18: mutter-454.diff
 #Patch19: mutter-460.diff
