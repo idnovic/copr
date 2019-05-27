@@ -1,6 +1,6 @@
 Name:           gnome-shell
 Version:        3.32.2
-Release:        3.5%{?dist}.idnovic
+Release:        3.6%{?dist}.idnovic
 Summary:        Window management and application launching for GNOME
 
 	
@@ -129,7 +129,7 @@ Obsoletes:      python3-caribou < 0.4.21-10
 
 ### downstream changes for idnovic/gnome-fix
 #Fix and polish the window overlays of the overview
-Patch4: gnome-shell-136.diff
+#Patch4: gnome-shell-136.diff
 #WIP: js/ui: Use captured-event::nonmotion [performance]
 Patch5: gnome-shell-276.diff
 #panel: Don't chain up to parent's allocate#merged
@@ -141,7 +141,7 @@ Patch6: gnome-shell-524.diff
 #windowManager: ensure actor resize clone dies with actor#merged
 #Patch8: gnome-shell-395.diff#merged
 #st: Only emit ::style-changed on actual changes#merged
-#Patch9: gnome-shell-505.diff
+Patch9: gnome-shell-505.diff
 #st: Delay handling of :first/:last-child changes#merged
 #Patch10: gnome-shell-529.diff#errormerge
 #Sort windows in the overview grid to minimize travel distance
@@ -149,7 +149,7 @@ Patch6: gnome-shell-524.diff
 #Fixes and performance improvements to the extension system
 Patch12: gnome-shell-96.diff
 #asynchronous roundtrip cycle
-#Patch13: gnome-shell-007.diff
+Patch13: gnome-shell-007.diff
 #Fix fallout from popup-menu this.actor removal#merged
 Patch14: gnome-shell-551.diff
 #introspect: Include `sandboxed-app-id` as well#merged
