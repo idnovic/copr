@@ -1,6 +1,6 @@
 Name:           gnome-shell
 Version:        3.32.2
-Release:        3.3%{?dist}.idnovic
+Release:        3.4%{?dist}.idnovic
 Summary:        Window management and application launching for GNOME
 
 	
