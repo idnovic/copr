@@ -128,7 +128,7 @@ Patch15: mutter-592.diff
 #wayland/pointer-constraints: Reject invalid lifetime#merged
 Patch16: mutter-494.diff
 #windowManager-Ensure-window-coords-match-frame-rect
-Patch17: mutter-007.patch#errormerge
+#Patch17: mutter-007.patch#errormerge
 #egl and realtime
 #Patch18: mutter-454.diff
 #Patch19: mutter-460.diff
