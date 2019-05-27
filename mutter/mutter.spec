@@ -8,7 +8,7 @@
 
 Name:          mutter
 Version:       3.32.2
-Release:       3.5%{?dist}.idnovic
+Release:       3.6%{?dist}.idnovic
 Summary:       Window and compositing manager based on Clutter
 
 License:       GPLv2+
@@ -117,7 +117,7 @@ Patch10: mutter-575.diff
 #backends: Do not reload keymap on new keyboard notifications#merged
 Patch11: mutter-579.diff
 #renderer-native: Reference count front buffers#merged
-Patch12: mutter-119.diff
+#Patch12: mutter-119.diff
 #Refactor DRM buffer management object#merged
 #Patch13: mutter-584.diff
 #window: free close dialog before unmanaging window from compositor#merged
@@ -130,7 +130,7 @@ Patch12: mutter-119.diff
 #Patch17: mutter-007.patch#errormerge
 #egl and realtime
 #Patch18: mutter-454.diff
-Patch19: mutter-460.diff
+#Patch19: mutter-460.diff
 ### end downstream changes
 
 %description
