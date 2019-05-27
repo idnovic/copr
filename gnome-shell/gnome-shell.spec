@@ -1,6 +1,6 @@
 Name:           gnome-shell
 Version:        3.32.2
-Release:        3.6%{?dist}.idnovic
+Release:        3.7%{?dist}.idnovic
 Summary:        Window management and application launching for GNOME
 
 	
@@ -129,7 +129,7 @@ Obsoletes:      python3-caribou < 0.4.21-10
 
 ### downstream changes for idnovic/gnome-fix
 #Fix and polish the window overlays of the overview
-#Patch4: gnome-shell-136.diff
+Patch4: gnome-shell-136.diff
 #WIP: js/ui: Use captured-event::nonmotion [performance]
 Patch5: gnome-shell-276.diff
 #panel: Don't chain up to parent's allocate#merged
@@ -163,8 +163,8 @@ Patch18: gnome-shell-525.diff
 #keyboard: Disable emoji support on X11#merged
 Patch19: gnome-shell-514.diff
 
-#%post
-#setcap CAP_SYS_NICE=+ep %{_bindir}/gnome-shell
+%post
+setcap CAP_SYS_NICE=+ep %{_bindir}/gnome-shell
 ### end downstream changes
 
 %description
