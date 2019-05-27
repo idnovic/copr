@@ -1,6 +1,6 @@
 Name:           gnome-shell
 Version:        3.32.2
-Release:        3.4%{?dist}.idnovic
+Release:        3.5%{?dist}.idnovic
 Summary:        Window management and application launching for GNOME
 
 	
@@ -163,8 +163,8 @@ Patch18: gnome-shell-525.diff
 #keyboard: Disable emoji support on X11#merged
 Patch19: gnome-shell-514.diff
 
-%post
-setcap CAP_SYS_NICE=+ep %{_bindir}/gnome-shell
+#%post
+#setcap CAP_SYS_NICE=+ep %{_bindir}/gnome-shell
 ### end downstream changes
 
 %description
