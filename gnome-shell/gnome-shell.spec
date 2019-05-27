@@ -1,6 +1,6 @@
 Name:           gnome-shell
 Version:        3.32.2
-Release:        3.8%{?dist}.idnovic
+Release:        4.0%{?dist}.idnovic
 Summary:        Window management and application launching for GNOME
 
 	
@@ -135,7 +135,7 @@ Patch5: gnome-shell-276.diff
 #panel: Don't chain up to parent's allocate#merged
 #Patch6: gnome-shell-521.diff#errormerge
 #Mild performance improvements on style changes#merged
-Patch6: gnome-shell-524.diff
+#Patch6: gnome-shell-524.diff#regression
 #Clean up gtk/gdk api usage#merged
 #Patch7: gnome-shell-317.diff#errormerge
 #windowManager: ensure actor resize clone dies with actor#merged
