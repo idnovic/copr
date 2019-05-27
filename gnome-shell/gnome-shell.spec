@@ -1,6 +1,6 @@
 Name:           gnome-shell
 Version:        3.32.2
-Release:        4.0%{?dist}.idnovic
+Release:        4.1%{?dist}.idnovic
 Summary:        Window management and application launching for GNOME
 
 	
@@ -131,11 +131,11 @@ Obsoletes:      python3-caribou < 0.4.21-10
 #Fix and polish the window overlays of the overview
 Patch4: gnome-shell-136.diff
 #WIP: js/ui: Use captured-event::nonmotion [performance]
-Patch5: gnome-shell-276.diff
+#Patch5: gnome-shell-276.diff
 #panel: Don't chain up to parent's allocate#merged
 #Patch6: gnome-shell-521.diff#errormerge
 #Mild performance improvements on style changes#merged
-#Patch6: gnome-shell-524.diff#regression
+Patch6: gnome-shell-524.diff
 #Clean up gtk/gdk api usage#merged
 #Patch7: gnome-shell-317.diff#errormerge
 #windowManager: ensure actor resize clone dies with actor#merged
