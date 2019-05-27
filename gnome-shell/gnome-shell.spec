@@ -141,7 +141,7 @@ Patch6: gnome-shell-524.diff
 #windowManager: ensure actor resize clone dies with actor#merged
 #Patch8: gnome-shell-395.diff#merged
 #st: Only emit ::style-changed on actual changes#merged
-Patch9: gnome-shell-505.diff
+#Patch9: gnome-shell-505.diff
 #st: Delay handling of :first/:last-child changes#merged
 #Patch10: gnome-shell-529.diff#errormerge
 #Sort windows in the overview grid to minimize travel distance
@@ -149,7 +149,7 @@ Patch9: gnome-shell-505.diff
 #Fixes and performance improvements to the extension system
 Patch12: gnome-shell-96.diff
 #asynchronous roundtrip cycle
-Patch13: gnome-shell-007.diff
+#Patch13: gnome-shell-007.diff
 #Fix fallout from popup-menu this.actor removal#merged
 Patch14: gnome-shell-551.diff
 #introspect: Include `sandboxed-app-id` as well#merged
@@ -162,7 +162,6 @@ Patch17: gnome-shell-536.diff
 Patch18: gnome-shell-525.diff
 #keyboard: Disable emoji support on X11#merged
 Patch19: gnome-shell-514.diff
-### end downstream changes
 
 %post
 setcap CAP_SYS_NICE=+ep %{_bindir}/gnome-shell
