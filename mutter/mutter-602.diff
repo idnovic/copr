@@ -143,7 +143,6 @@ index 6779eb70b7404519b4ce4c251bd51040ea5d34e1..3197a32e3e4d1606847933c6229c88f2
 -
    _clutter_threads_release_lock ();
  
-   return TRUE;
 @@ -608,7 +523,6 @@ clutter_master_clock_default_init (ClutterMasterClockDefault *self)
    source = clutter_clock_source_new (self);
    self->source = source;
