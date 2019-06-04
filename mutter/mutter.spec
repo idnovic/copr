@@ -8,7 +8,7 @@
 
 Name:          mutter
 Version:       3.32.2
-Release:       4.0%{?dist}.idnovic
+Release:       4.1%{?dist}.idnovic
 Summary:       Window and compositing manager based on Clutter
 
 License:       GPLv2+
@@ -100,6 +100,8 @@ Patch1: mutter-520.diff
 Patch2: mutter-281.diff
 #Consolidate all frame throttling into clutter-stage-cogl
 #Patch3: mutter-363.diff#errormerge
+#cogl: Remove GLX "threaded swap wait" used on Nvidia#includes 363
+Patch3: mutter-602.diff
 #Geometric (OpenGL-less) picking
 #Patch4: mutter-189.diff#errorbuggy fullscreen
 #WIP: Cleanups to achieve to fully software-based picking 
@@ -131,6 +133,8 @@ Patch16: mutter-494.diff
 #egl and realtime
 Patch18: mutter-454.diff
 Patch19: mutter-460.diff
+#compositor/surface-actor-wayland: Return toplevel window in get_window()
+Patch20: mutter-604.diff
 ### end downstream changes
 
 %description

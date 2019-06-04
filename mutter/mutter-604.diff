@@ -1,0 +1,13 @@
+diff --git a/src/compositor/meta-surface-actor-wayland.c b/src/compositor/meta-surface-actor-wayland.c
+index f8d6c32b766000ed92b68534a03190d321c781db..859e5e7608ac1f904eb8304a6e2461db792b7df4 100644
+--- a/src/compositor/meta-surface-actor-wayland.c
++++ b/src/compositor/meta-surface-actor-wayland.c
+@@ -107,7 +107,7 @@ meta_surface_actor_wayland_get_window (MetaSurfaceActor *actor)
+   if (!surface)
+     return NULL;
+ 
+-  return surface->window;
++  return meta_wayland_surface_get_toplevel_window (surface);
+ }
+ 
+ static void
