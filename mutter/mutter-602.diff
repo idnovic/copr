@@ -136,7 +136,8 @@ index 6779eb70b7404519b4ce4c251bd51040ea5d34e1..3197a32e3e4d1606847933c6229c88f2
  
    master_clock_reschedule_stage_updates (master_clock, stages);
  
-   g_slist_free_full (stages, g_object_unref);
+   g_slist_foreach (stages, (GFunc) g_object_unref, NULL);
+   g_slist_free (stages);
  
 -  master_clock->prev_tick = master_clock->cur_tick;
 -
