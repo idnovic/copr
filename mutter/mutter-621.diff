@@ -1,0 +1,77 @@
+diff --git a/src/core/window-private.h b/src/core/window-private.h
+index eb497659f18899090c500ac4e2dbf05633788fce..0c71152a4198ab7a38e59ca3c183e8055f791a24 100644
+--- a/src/core/window-private.h
++++ b/src/core/window-private.h
+@@ -81,9 +81,10 @@ typedef enum
+   META_MOVE_RESIZE_WAYLAND_RESIZE = 1 << 4,
+   META_MOVE_RESIZE_STATE_CHANGED = 1 << 5,
+   META_MOVE_RESIZE_UNMAXIMIZE = 1 << 6,
+-  META_MOVE_RESIZE_FORCE_MOVE = 1 << 7,
+-  META_MOVE_RESIZE_WAYLAND_STATE_CHANGED = 1 << 8,
+-  META_MOVE_RESIZE_FORCE_UPDATE_MONITOR = 1 << 9,
++  META_MOVE_RESIZE_UNFULLSCREEN = 1 << 7,
++  META_MOVE_RESIZE_FORCE_MOVE = 1 << 8,
++  META_MOVE_RESIZE_WAYLAND_STATE_CHANGED = 1 << 9,
++  META_MOVE_RESIZE_FORCE_UPDATE_MONITOR = 1 << 10,
+ } MetaMoveResizeFlags;
+ 
+ typedef enum
+@@ -626,6 +627,7 @@ void        meta_window_queue              (MetaWindow  *window,
+                                             guint queuebits);
+ void        meta_window_tile               (MetaWindow        *window,
+                                             MetaTileMode       mode);
++MetaTileMode meta_window_get_tile_mode     (MetaWindow        *window);
+ void        meta_window_restore_tile       (MetaWindow        *window,
+                                             MetaTileMode       mode,
+                                             int                width,
+diff --git a/src/core/window.c b/src/core/window.c
+index d8384c3a8020298dce711aebbd028ecd01432c99..1b36ff7b9f2d37959216b5c07a42692ec86eb7f2 100644
+--- a/src/core/window.c
++++ b/src/core/window.c
+@@ -3210,6 +3210,12 @@ meta_window_tile (MetaWindow   *window,
+     meta_frame_queue_draw (window->frame);
+ }
+ 
++MetaTileMode
++meta_window_get_tile_mode (MetaWindow *window)
++{
++  return window->tile_mode;
++}
++
+ void
+ meta_window_restore_tile (MetaWindow   *window,
+                           MetaTileMode  mode,
+@@ -3555,7 +3561,8 @@ meta_window_unmake_fullscreen (MetaWindow  *window)
+       meta_window_move_resize_internal (window,
+                                         (META_MOVE_RESIZE_MOVE_ACTION |
+                                          META_MOVE_RESIZE_RESIZE_ACTION |
+-                                         META_MOVE_RESIZE_STATE_CHANGED),
++                                         META_MOVE_RESIZE_STATE_CHANGED |
++                                         META_MOVE_RESIZE_UNFULLSCREEN),
+                                         NorthWestGravity,
+                                         target_rect);
+ 
+diff --git a/src/wayland/meta-window-wayland.c b/src/wayland/meta-window-wayland.c
+index 5ce67c6890f5f4a427928eff6ac189f74beae36f..d72b3bbc198534279ae8f9d4e8d578db3771cb2c 100644
+--- a/src/wayland/meta-window-wayland.c
++++ b/src/wayland/meta-window-wayland.c
+@@ -217,9 +217,17 @@ meta_window_wayland_move_resize_internal (MetaWindow                *window,
+    * coordinate space so that we can have a scale independent size to pass
+    * to the Wayland surface. */
+   geometry_scale = meta_window_wayland_get_geometry_scale (window);
+-  if (flags & META_MOVE_RESIZE_UNMAXIMIZE)
++
++  if (flags & META_MOVE_RESIZE_UNMAXIMIZE &&
++      !meta_window_is_fullscreen (window))
++    {
++      configured_width = 0;
++      configured_height = 0;
++    }
++  else if (flags & META_MOVE_RESIZE_UNFULLSCREEN &&
++           !meta_window_get_maximized (window) &&
++           meta_window_get_tile_mode (window) == META_TILE_NONE)
+     {
+-      /* On un-maximize, let the client decide on its size */
+       configured_width = 0;
+       configured_height = 0;
+     }

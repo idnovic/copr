@@ -8,7 +8,7 @@
 
 Name:          mutter
 Version:       3.32.2
-Release:       4.1%{?dist}.idnovic
+Release:       4.2%{?dist}.idnovic
 Summary:       Window and compositing manager based on Clutter
 
 License:       GPLv2+
@@ -135,6 +135,8 @@ Patch18: mutter-454.diff
 Patch19: mutter-460.diff
 #compositor/surface-actor-wayland: Return toplevel window in get_window()
 Patch20: mutter-604.diff
+#Handle returning from fullscreen or maximized better#merged
+Patch21: mutter-621.diff
 ### end downstream changes
 
 %description
