@@ -1,0 +1,12 @@
+diff --git a/src/backends/native/meta-renderer-native.c b/src/backends/native/meta-renderer-native.c
+index 31ba6d22fa95a587e78a132e3bf5f8efc8c083cf..77b16ae191ee31991a7ce151e1601f51206f1a7b 100644
+--- a/src/backends/native/meta-renderer-native.c
++++ b/src/backends/native/meta-renderer-native.c
+@@ -3908,6 +3908,7 @@ create_renderer_gpu_data_egl_device (MetaRendererNative  *renderer_native,
+                    G_IO_ERROR_FAILED,
+                    "Missing EGL extensions required for EGLDevice renderer: %s",
+                    missing_extensions_str);
++      meta_egl_terminate (egl, egl_display, NULL);
+       g_free (missing_extensions_str);
+       g_free (missing_extensions);
+       return NULL;
