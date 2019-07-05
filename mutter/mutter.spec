@@ -8,7 +8,7 @@
 
 Name:          mutter
 Version:       3.32.2
-Release:       4.3%{?dist}.idnovic
+Release:       4.4%{?dist}.idnovic
 Summary:       Window and compositing manager based on Clutter
 
 License:       GPLv2+
@@ -139,6 +139,8 @@ Patch20: mutter-604.diff
 Patch21: mutter-619.diff
 #Handle returning from fullscreen or maximized better#merged
 Patch22: mutter-621.diff
+#clutter/stage: Process input events out of phase with redraws [performance]
+Patch23: mutter-661.diff
 ### end downstream changes
 
 %description
